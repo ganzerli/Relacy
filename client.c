@@ -2,39 +2,10 @@
 #include<stdlib.h>
 #include<curl/curl.h>
 #include<string.h>
+#include"utils.h"
 
 char *url = NULL;
 
-// UTIL
-
-signed int strLen(char* str){
-    signed int c = 0;
-    while (str[c] != '\0'){
-        c++;
-    }
-    //printf("Length of the string: %d\n", c);
-    return c;
-}
-
-char* strConcat(char* result , char* str1, int size1, char* str2, int size2){
-
-    int sum = size1 + size2;
-    int incrementor = 0;
-
-    for (int i = 0; i < size1; i++){
-        result[i]= str1[i];
-        incrementor++;
-    }
-
-    for (int i = 0; i < size2; i++){
-        result[incrementor+i]= str2[i];
-    }
-
-    result[sum] = '\0';
-    result[sum+1] = '\0';
-
-    return result;
-}
 
 // having a string, define begin char and other char, an index of second [...+second] to mind the word "h"ell"o"
 // char to finish the string "\n" "\0"
@@ -76,8 +47,6 @@ char* findStrings(char* string , char* buffer, char firstChar, char lastCharFirs
         }
     }
 
-    buffer[counter]='\0';
-    buffer[counter+1]='\0';
     return buffer;
 }
 
@@ -155,17 +124,6 @@ void http_get(char *url, struct memory_struct *mem){
     // cleanup
     curl_easy_cleanup(curl_handle);
     curl_global_cleanup();
-}
-
-// FILE
-
-int fileWrite(char* content, char* path){
-    FILE *fp;
-   fp = fopen(path, "w+");
-   //fprintf(fp, content);
-   fputs(content, fp);
-   fclose(fp);
-   return 0;
 }
 
 int scanLinks(char* content, char* str1){
@@ -272,14 +230,10 @@ int main(int argc, char** args){
     char url[255];
     printf("%s","insert domain to visit: https://en.wikipedia.org/wiki/Amsterdam\n");
     scanf("%s", url);
-
     printf("trying to make http request to: %s\n", url);
     struct memory_struct m;
     http_get(url, &m);
-   // printf("\nresponse:\n%s", m.buffer);
-
     fileWrite(m.buffer,"/home/name/Desktop/crowler/RELACY/DATA/test.html");
-
     // filling struct
     struct str_buf_struct s_b;
     s_b.size = 1024 * 256;
@@ -287,50 +241,23 @@ int main(int argc, char** args){
     s_b.str = string;
     char* buffer = malloc(s_b.size);
     s_b.buffer = buffer;
-
     char buffer2[s_b.size];
-
     scanLinks(m.buffer, s_b.str);
-
     char* domain = "https://en.wikipedia.org";
-
     // restore links
     char* twoSlashes = findStrings( s_b.str, buffer, '/','/', 1, '\n');
-
     signed int end = strLen(twoSlashes);
     char* result;
     result = malloc(end * 2);
-
     char* formattedLinks = formatLinks(twoSlashes, result);
     char* https = findStrings( s_b.str, buffer2, 'h',':', 5, '\n');
-
     int sizeFormLinks = strLen(formattedLinks);
     int sizeHttps = strLen(https);
-
-
     char *buffer3 = malloc(s_b.size);
     char *fileTemplate = strConcat(buffer3,formattedLinks,sizeFormLinks,https,sizeHttps);
-
     printf("%s",fileTemplate);
-
     fileWrite(fileTemplate,"/home/name/Desktop/crowler/RELACY/DATA/domains.txt");
-
-
-
-
     free(buffer);
     free(string);
-
-
-
-
-
-
-    // free struct memory
-    
-
-    // empty test.html
-    //fileWrite("\n\0","/home/name/Desktop/crowler/RELACY/DATA/test.html");
-
     return 0;
 }

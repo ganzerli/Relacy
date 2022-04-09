@@ -85,7 +85,12 @@ int main(int argc, char** args){
 
     readFile(buffer,size,path);
 
-   // printf("%s",buffer);
+   printf("%s","################");
+
+
+   printf("%s",buffer);
+   printf("%s","###########");
+
 
     int count = strLen(buffer);
     int indexes[1024*4];
