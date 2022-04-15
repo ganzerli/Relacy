@@ -4,7 +4,6 @@
 #include<string.h>
 #include"utils.h"
 
-
 char *url = NULL;
 // struct for hoding http response.
 struct memory_struct{
@@ -36,9 +35,11 @@ mem_write(void *contents, size_t size, size_t nmemb, void *userp){
     return realsize;
 }
 
-void http_get(char *url, struct memory_struct *mem){
+int http_get(char *url, struct memory_struct *mem){
     CURL *curl_handle;
     CURLcode res;
+
+    int num = 0;
     
     mem->buffer = malloc(1);
     mem->size   = 0;
@@ -60,118 +61,67 @@ void http_get(char *url, struct memory_struct *mem){
  
     // check for errors.
     if(res != CURLE_OK){
+        num = 1;
         fprintf(stderr, "curl_easy_perform() failed: %s\n", 
                 curl_easy_strerror(res));
+                
     }
- 
     // cleanup
     curl_easy_cleanup(curl_handle);
     curl_global_cleanup();
+    return num;
 }
-
-
-
-
-// @ MAIN FUNCTIONS
+// @ MAIN FUNCTION
 // main()
 
+//  GET FROM LINKS, SOME LINKS, MAKES HTTP CALL, AND PUTS ALL HTML PAGES IN WORDSDUMP.TXT
 int main(int argc, char** args){
     char * path = "/home/name/Desktop/crowler/RELACY/DATA/domains.txt";
-    printf("%s",path);
-
-
+    // printf("%s",path);
     int size = 1024*256;
     char buffer[size];
-
     readFile(buffer,size,path);
-
-   printf("%s","################");
-
-
-   printf("%s",buffer);
-   printf("%s","###########");
-
-
+//    printf("%s","################");
+//    printf("%s",buffer);
+//    printf("%s","###########");
     int count = strLen(buffer);
     int indexes[1024*4];
     int nLines = countLines(buffer,indexes);
-    printf("%d\n",nLines);
-    printf("%s","222222222222222222");
-    
-    // taking random 10 domains to call
-    int num = count/nLines * 2;
-    //about every 700 lines
-
-   // printf("%d\n",nLines);
-
-
-
-    int result [count/num][256];
-
-
-// aboaut 7 lines
-    //printf("%d",indexes[0] / num);
-
-
-    const int calc_reasonable_amount = indexes[0]/num;
-
-    char domains[calc_reasonable_amount][255];
+    int result [10][256];
+    const int calc_reasonable_amount = nLines/10;
+    char domains[10][256];
     int charCounter = 0;
     int ct = 0;
 
-    printf("%s","222222222222222222");
-
-
-    // for (int i = 1; i < indexes[0]; i+= calc_reasonable_amount){
-
-    //     while(buffer[indexes[i]+charCounter] != '\n'){
-    //        domains[ct][charCounter] = buffer[indexes[i]+charCounter];
-    //        charCounter++;
-    //     }
-    //     domains[ct][charCounter+1]='\0';
-    //     ct ++;
-    //     charCounter = 0;
-    //     /* code */
-    // }
-
-    printf("%s","333333333");
-
-    
-// WITH AROUND 7 - 10 DOMAINS MAKE FILES
-
+    for (int i = 1; i < nLines; i+= calc_reasonable_amount){
+        while(buffer[indexes[i]+charCounter] != '\n'){
+           domains[ct][charCounter] = buffer[indexes[i]+charCounter];
+        //    printf("%c",domains[ct][charCounter]);
+           charCounter++;
+        }
+        domains[ct][charCounter+1]='\n';
+        ct ++;
+        charCounter = 0;
+        // printf("%c",'\n');
+    }
     struct memory_struct m;
+    char resultBuffer[1024*256];
+    path = "/home/name/Desktop/crowler/RELACY/DATA/wordsdump.txt";
+    FILE *fp;
+    fp = fopen(path, "w");
+    if(fp == NULL) {
+        // printf("file couldn't be opened\n");
+        exit(1);
+    }
+    for (int i = 0; i < calc_reasonable_amount -1; i++){
+        if(!http_get(domains[i], &m)){
+          // printf("%s",m.buffer);
+          fputs(m.buffer,fp);
+        };
+    }
 
-    char resultBuffer[1024*1024];
-    int length1 =0;
-    int length2 =0;
-
-     for (int i = 0; i < calc_reasonable_amount; i++){
-
-
-         length1 = strLen(m.buffer);
-         length2 = strLen(resultBuffer);
-            printf("%s","making call ....");
-          http_get(domains[i], &m);
-
-         strConcat(resultBuffer, resultBuffer,length1,m.buffer,length2);
-
-        // printf("%s",m.buffer);
-     }
-        
-        
-        printf("%s",resultBuffer);
-
-
-
-
-
-
-    char url[255];
-    printPorcamadonna();
-
-
-    //m.buffer
-    //fileWrite(m.buffer,"/home/name/Desktop/crowler/RELACY/DATA/test.html");
-
+        fputs("@@@",fp);
+        fclose(fp);
+        // printf("%s",resultBuffer);
     return 0;
 }
