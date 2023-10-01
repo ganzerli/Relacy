@@ -1,27 +1,30 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "file.c"
 
 typedef __uint8_t u8;
+#include "file.c"
+#include "outputs.c"
+#include "alphabet.c"
 
+
+//  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // // USER PROMPT FOR ONE WORD TO ONECOMPLETESENTENCE // //  // //  // //  // //  // //  // //  // //  // //  // //  // 
 u8 input_get_word(char *word){
 
-    fgets(word,64,stdin);
-    printf("selected word:  %s", word);
-    
-    u8 count = 0;
-    char c = word[count];
-    
-    while(c != '\0'){
-        count ++;
-        c = word[count];
-    }
-
-    printf("word size: %u\n" , count-1);
-    return count - 1 ;
+    // user prompt
+    char output[OUT_SIZE];
+    char* o = gnu_Output(0,output);
+    o_ut(o);
+    // input
+    fgets(word,OUT_SIZE,stdin);
+    unsigned short int count = str_format(word);
+    // printing formatted 
+    o = gnu_Output(1,o);
+    o_ut(o);
+    printf(" %s\n", word);
+    return count ;
 }
 
-
+//  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  M A I N  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // 
 void main(){
     printf("#################################################################\n");
     printf("#                                                               #\n");
@@ -42,7 +45,6 @@ void main(){
     
     // enought for 1 word , even in dutch, the longest dutch word according to lingo is 60 chars
     char word[64];
-
-    u8 wsz = input_get_word(word);
+    u8 zis_e = input_get_word(word);
 
 }
