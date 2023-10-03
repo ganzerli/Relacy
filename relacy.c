@@ -15,7 +15,7 @@ u8 input_get_word(char *word){
     char* o = gnu_Output(0,output);
     o_ut(o);
     // input
-    fgets(word,OUT_SIZE,stdin);
+    fgets(word,64,stdin);
     unsigned short int count = str_format(word);
     // printing formatted 
     o = gnu_Output(1,o);
@@ -46,5 +46,8 @@ void main(){
     // enought for 1 word , even in dutch, the longest dutch word according to lingo is 60 chars
     char word[64];
     u8 zis_e = input_get_word(word);
+
+    //getting positions of first char and length of every substring 
+    strpreprocess("a\0" , "bbbabbbabbbb\0");
 
 }
