@@ -42,12 +42,17 @@ void main(){
 
     // check existence of files
     relacy_check();
-    
+
     // enought for 1 word , even in dutch, the longest dutch word according to lingo is 60 chars
     char word[64];
     u8 zis_e = input_get_word(word);
 
-    //getting positions of first char and length of every substring 
-    strpreprocess("a\0" , "bbbabbbabbbb\0");
+    char ** strings = strsplit( "\n" , "GET /search?q=test HTTP/2\nHost: www.bing.com\nUser-Agent: curl/7.54.0\nAccept: */*\r\n");
+    unsigned int count = get_crazyglobalcounter();
+    for (unsigned int i = 0; i < count; i++){
+        printf("%s\n" , strings[i] );
+    }
+    
+
 
 }

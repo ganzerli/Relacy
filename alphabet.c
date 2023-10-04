@@ -7,6 +7,14 @@ struct index {
 
 unsigned int crazy_global_counter = 0;
 
+void set_crazyglobalcounter(unsigned int n){
+    crazy_global_counter = n;
+}
+
+unsigned int get_crazyglobalcounter(){
+    return crazy_global_counter;
+}
+
 
 // rewrites in the same buffer the allowed charachters and adds 0 at the end
 unsigned short str_format(char* word){
@@ -70,27 +78,21 @@ unsigned char str_cmp(unsigned int size, char* _1 , char* _2){
     return result;
 }
 
-
-// //  // //  // //  // //  // //  // //  // //  // //  // //  // // PREPROCESS STRING // //  // //  // //  // //  
+// //  // //  // //  // //  // //  // //  // //  // //  // //  // // PREPROCESS STRING , LOAD STRUCTS WITH INDEX AND SIZE OF SUBSTRINGS // //  // //  // //  // //  
 struct index* strpreprocess(char* splitter , char* str){
     // splitter , str : size
     unsigned int spl_sz = str_len(splitter);
     unsigned int str_sz = str_len(str);
-
     // get first char 
     register char frc = splitter[0];    
-
     struct index iiddxx;
     // worst case scenario
     struct index *idx_s = malloc(sizeof iiddxx * (str_sz / 2) );
-
     // set o as first index
     unsigned int indextosave = 0;
-
     // iterators
     unsigned int i = 0;
-    unsigned int struct_counter = 0;
-    
+    unsigned int structs_counter = 0;
     while ( str[i] != '\0' ){
         // chaeck if first char of splitter is found
         if(str[i] == frc){
@@ -100,9 +102,8 @@ struct index* strpreprocess(char* splitter , char* str){
                 // set iterators
                 i+= spl_sz;                                                                                         //  set i after splitter   ab[c]<,>[i]bcdef
                 indextosave = i;                                                                                    // set indx after splitter ab c <,>[a]bcdef
-
                 // load struct in array of structs
-                idx_s[struct_counter++] = iiddxx;
+                idx_s[structs_counter++] = iiddxx;
             }
         }
         i++;
@@ -110,18 +111,39 @@ struct index* strpreprocess(char* splitter , char* str){
     // collecting the last one
     iiddxx.index = indextosave;
     iiddxx.size = i - indextosave;
-    idx_s[struct_counter] = iiddxx;
-
-    for(i = 0 ; i <= struct_counter; i++){
-        iiddxx = idx_s[i];
-        printf("index saved=%u\nsize=%u\n",iiddxx.index , iiddxx.size );
-    }
-
-    idx_s = realloc(idx_s , sizeof(iiddxx)* struct_counter);
-    crazy_global_counter = struct_counter;
-
+    idx_s[structs_counter] = iiddxx;
+    // memory
+    idx_s = realloc(idx_s , sizeof(iiddxx)* structs_counter);
+    set_crazyglobalcounter(structs_counter + 1);
     return idx_s;
 }
 
-
+// //  // //  // //  // //  // //  // //  // //  // //  // //  // // GET ARRAY OF POINTERS FOR STRINGS // //  // //  // //  // //  
+char ** strsplit(char* splitter , char* str){
+    // getting struct array of data abou splitting
+    struct index* idx_s;
+    idx_s = strpreprocess(splitter , str);
+    // knowing size of array of pointers
+    unsigned int count = get_crazyglobalcounter();
+    char ** splitted_strings = malloc( sizeof (char*) * count );
+    // get substring from to following index structure
+    char* new_string_from(char* str , unsigned int index , unsigned int size){
+        char* newstr = malloc( (sizeof (char) * size) + 1 );
+        for (unsigned int i = 0; i < size; i++){
+            newstr[i] = str[index + i];
+        }
+        newstr[size] = '\0';
+        return newstr;
+    };
+    // making a new string substringing str and saving the pointer in splitted_strings
+    char *newstr;
+    for (unsigned int i = 0; i < count; i++){
+        newstr = new_string_from(str , idx_s[i].index, idx_s[i].size ) ;
+        splitted_strings[i] = newstr;
+    }
+    // is already count, but just in this unix time
+    set_crazyglobalcounter(count);
+    free(idx_s);
+    return splitted_strings;
+}
 
