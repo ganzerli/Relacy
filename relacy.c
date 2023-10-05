@@ -47,7 +47,8 @@ void main(){
     char word[64];
     u8 zis_e = input_get_word(word);
 
-    char ** strings = strsplit( "\n" , "GET /search?q=test HTTP/2\nHost: www.bing.com\nUser-Agent: curl/7.54.0\nAccept: */*\r\n");
+    // splitting and printing
+    char ** strings = strsplit( "\n" , "GET /search?q=test HTTP/2\nHost: www.bing.com\nUser-Agent: curl/7.54.0\nAccept: */*");
     unsigned int count = get_crazyglobalcounter();
     for (unsigned int i = 0; i < count; i++){
         printf("%s\n" , strings[i] );

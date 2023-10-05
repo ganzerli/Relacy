@@ -108,13 +108,14 @@ struct index* strpreprocess(char* splitter , char* str){
         }
         i++;
     }
-    // collecting the last one
-    iiddxx.index = indextosave;
-    iiddxx.size = i - indextosave;
-    idx_s[structs_counter] = iiddxx;
+    // collecting the last from last struct
+    iiddxx.index = iiddxx.index + iiddxx.size + spl_sz;
+    iiddxx.size = i - iiddxx.index ;
+    idx_s[structs_counter++] = iiddxx;
+
     // memory
     idx_s = realloc(idx_s , sizeof(iiddxx)* structs_counter);
-    set_crazyglobalcounter(structs_counter + 1);
+    set_crazyglobalcounter(structs_counter);
     return idx_s;
 }
 
