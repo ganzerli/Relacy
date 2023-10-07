@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "server.c"
 
 typedef __uint8_t u8;
 #include "file.c"
@@ -49,11 +50,11 @@ void main(){
 
     // splitting and printing
     char ** strings = strsplit( "\n" , "GET /search?q=test HTTP/2\nHost: www.bing.com\nUser-Agent: curl/7.54.0\nAccept: */*");
-    unsigned int count = get_crazyglobalcounter();
-    for (unsigned int i = 0; i < count; i++){
-        printf("%s\n" , strings[i] );
-    }
+
+    print_strings(strings);
+
     
+   
 
 
 }

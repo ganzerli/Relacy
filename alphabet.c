@@ -148,3 +148,15 @@ char ** strsplit(char* splitter , char* str){
     return splitted_strings;
 }
 
+
+// //  // //  // //  // //  // //  // //  // //  // //  // //  // // GPRINTING MANY STRINGS // //  // //  // //  // //  
+void print_strings(char ** strings){
+    printf("\n");
+    unsigned int count = get_crazyglobalcounter();
+    for (unsigned int i = 0; i < count; i++){
+        printf("%s\n" , strings[i] );
+    }
+    set_crazyglobalcounter(0);
+}
+
+
