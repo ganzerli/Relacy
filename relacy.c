@@ -1,29 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "server.c"
 
 typedef __uint8_t u8;
 #include "file.c"
 #include "outputs.c"
 #include "alphabet.c"
 
-
-//  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // // USER PROMPT FOR ONE WORD TO ONECOMPLETESENTENCE // //  // //  // //  // //  // //  // //  // //  // //  // //  // 
-u8 input_get_word(char *word){
-
-    // user prompt
-    char output[OUT_SIZE];
-    char* o = gnu_Output(0,output);
-    o_ut(o);
-    // input
-    fgets(word,64,stdin);
-    unsigned short int count = str_format(word);
-    // printing formatted 
-    o = gnu_Output(1,o);
-    o_ut(o);
-    printf(" %s\n", word);
-    return count ;
-}
+#include "server.c"
 
 //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  M A I N  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // 
 void main(){
@@ -44,17 +27,17 @@ void main(){
     // check existence of files
     relacy_check();
 
-    // enought for 1 word , even in dutch, the longest dutch word according to lingo is 60 chars
-    char word[64];
-    u8 zis_e = input_get_word(word);
-
     // splitting and printing
-    char ** strings = strsplit( "\n" , "GET /search?q=test HTTP/2\nHost: www.bing.com\nUser-Agent: curl/7.54.0\nAccept: */*");
+//    char ** strings = strsplit( "\n" , "GET /search?q=test HTTP/2\nHost: www.bing.com\nUser-Agent: curl/7.54.0\nAccept: */*");
+//    print_strings(strings);
 
-    print_strings(strings);
+    char* port = "8086";
+    unsigned int queue = 10;
 
-    
-   
+    unsigned int buflen = 256;
+    char buffer[buflen];
 
+    printf("server connecting");
+    relacy_listen( port , queue );
 
 }
