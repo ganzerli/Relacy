@@ -8,9 +8,7 @@
 #include <errno.h>
 #include <sys/types.h>
 
-// backend framework
-#include "request.c"
-#include "response.c"
+#include "backend_framework.c"
 
 void sigchld_handler(int s){
     // waitpid() might overwrite errno, so we save and restore it:
@@ -117,10 +115,8 @@ unsigned int relacy_listen( char* port , unsigned int queue ){
 
         // manage request
         result = recv(new_fd, buffer, (1024*1024), 0);
-        if(result != -1)manage_request(buffer , (unsigned int)result);
         
-        // create response
-        size = create_response(buffer);
+        if(result != -1)size = backend_framework(buffer,(unsigned int) result);
         
         if (!fork()) {                                                              // this is the child process
             close(sockfd);                                                          // child doesn't need the listener
