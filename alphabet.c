@@ -5,20 +5,25 @@ struct index {
     unsigned int index;
 };
 
-unsigned int crazy_global_counter = 0;
+unsigned int strgs_counter = 0;
 
-void set_crazyglobalcounter(unsigned int n){
-    crazy_global_counter = n;
+void set_strgs_counter(unsigned int n){
+    strgs_counter = n;
 }
 
-unsigned int get_crazyglobalcounter(){
-    return crazy_global_counter;
+unsigned int get_strgs_counter(){
+    return strgs_counter;
 }
 
+
+str_unset(char* str, unsigned int size){
+    for (unsigned int i = 0; i < size; i++){
+        str[i] = '\0';
+    }
+}
 
 // rewrites in the same buffer the allowed charachters and adds 0 at the end
 unsigned short str_format(char* word){
-
     u8 count = 0;
     u8 check = 0;
     unsigned int i = 0;
@@ -41,7 +46,7 @@ unsigned short str_format(char* word){
 }
 
 // dreaming a world where no libraries already exist, no univerities, no predefied quantities, just a list, of where to get what... where the poor is really the poor, and the other, is in one of those places.
-unsigned int str_conc(char* s1 , char* s2 , char* result){
+unsigned int str_cat( char* result, char* s1 , char* s2){
     unsigned int zise = 0;
     unsigned int i = 0;
 
@@ -115,17 +120,17 @@ struct index* strpreprocess(char* splitter , char* str){
 
     // memory
     idx_s = realloc(idx_s , sizeof(iiddxx)* structs_counter);
-    set_crazyglobalcounter(structs_counter);
+    set_strgs_counter(structs_counter);
     return idx_s;
 }
 
 // //  // //  // //  // //  // //  // //  // //  // //  // //  // // GET ARRAY OF POINTERS FOR STRINGS // //  // //  // //  // //  
-char ** strsplit(char* splitter , char* str){
+char ** str_split(char* splitter , char* str){
     // getting struct array of data abou splitting
     struct index* idx_s;
     idx_s = strpreprocess(splitter , str);
     // knowing size of array of pointers
-    unsigned int count = get_crazyglobalcounter();
+    unsigned int count = get_strgs_counter();
     char ** splitted_strings = malloc( sizeof (char*) * count );
     // get substring from to following index structure
     char* new_string_from(char* str , unsigned int index , unsigned int size){
@@ -143,7 +148,7 @@ char ** strsplit(char* splitter , char* str){
         splitted_strings[i] = newstr;
     }
     // is already count, but just in this unix time
-    set_crazyglobalcounter(count);
+    set_strgs_counter(count);
     free(idx_s);
     return splitted_strings;
 }
@@ -152,11 +157,18 @@ char ** strsplit(char* splitter , char* str){
 // //  // //  // //  // //  // //  // //  // //  // //  // //  // // GPRINTING MANY STRINGS // //  // //  // //  // //  
 void print_strings(char ** strings){
     printf("\n");
-    unsigned int count = get_crazyglobalcounter();
+    unsigned int count = get_strgs_counter();
     for (unsigned int i = 0; i < count; i++){
         printf("%s\n" , strings[i] );
     }
-    set_crazyglobalcounter(0);
+    set_strgs_counter(0);
+}
+
+void str_cpy(char* result, char* str){
+    int count = str_len(str);
+    for (unsigned int i = 0; i < count; i++){
+        result[i] = str[i];
+    }
 }
 
 

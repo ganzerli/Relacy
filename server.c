@@ -6,7 +6,11 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>
-#include <sys/types.h>                                     
+#include <sys/types.h>
+
+// backend framework
+#include "request.c"
+#include "response.c"
 
 void sigchld_handler(int s){
     // waitpid() might overwrite errno, so we save and restore it:
@@ -83,7 +87,6 @@ unsigned int relacy_listen( char* port , unsigned int queue ){
         perror("listen");                                                           // LISTEN ERROR
         return 0;
     }
-
     sa.sa_handler = sigchld_handler;                                                // reap all dead processes
     sigemptyset(&sa.sa_mask);                                                       // set sigaction struct to NULL
     sa.sa_flags = SA_RESTART;                                                       // set restart flag
@@ -91,6 +94,11 @@ unsigned int relacy_listen( char* port , unsigned int queue ){
         perror("sigaction");
         return 0;
     }
+
+    // web framework
+    unsigned int size;
+    short result;
+    char buffer[1024*1024];
 
     while (1){                                                                      // accepting, waiting connections
         sin_size = sizeof foreign_addr;
@@ -104,22 +112,25 @@ unsigned int relacy_listen( char* port , unsigned int queue ){
                     s,
                     sizeof s
                 );
+        
         printf("server: got connection from %s\n", s);
+
         // manage request
-        //
-        //
-        // here we will need some: java, ruby, php, or even some javascript, and who knows.. maybe also some... SQL.. ah no! there is e-paty !!!!
-        //
-        //
+        result = recv(new_fd, buffer, (1024*1024), 0);
+        if(result != -1)manage_request(buffer , (unsigned int)result);
+        
         // create response
+        size = create_response(buffer);
+        
         if (!fork()) {                                                              // this is the child process
-        close(sockfd);                                                              // child doesn't need the listener
-        if (send(new_fd, "welcom to relacy", 16, 0) == -1)
-            perror("send");
-            close(new_fd);
-            exit(0);
+            close(sockfd);                                                          // child doesn't need the listener
+            if (send(new_fd, buffer, size, 0) == -1)
+                perror("send");
+                close(new_fd);
+                exit(0);
         }
         close(new_fd);                                                              // parent doesn't need this
+        str_unset(buffer, size);
     }
     return 1;
 }
