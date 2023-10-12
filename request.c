@@ -7,7 +7,7 @@ struct HTTP_request{
     char** headers;
     unsigned int attributes_count;
     char* body;
-};
+}http_request;
 
 void manage_request(char *buffer , unsigned int size , struct HTTP_request * req){
     buffer[size] = '\0';
