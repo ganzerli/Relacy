@@ -16,7 +16,7 @@ unsigned int get_strgs_counter(){
 }
 
 
-str_unset(char* str, unsigned int size){
+void str_unset(char* str, unsigned int size){
     for (unsigned int i = 0; i < size; i++){
         str[i] = '\0';
     }
