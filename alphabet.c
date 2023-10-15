@@ -169,6 +169,7 @@ void str_cpy(char* result, char* str){
     for (unsigned int i = 0; i < count; i++){
         result[i] = str[i];
     }
+    result[count] = '\0';
 }
 
 

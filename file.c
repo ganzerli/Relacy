@@ -28,11 +28,11 @@ unsigned int file_load(char *buffer , char* filename){
 }
 
 
-unsigned int get_pic(int8_t *buffer){
+unsigned int get_pic(int8_t *buffer , char*filename){
 
     FILE *pic ;
     int i;
-    pic = fopen("E-pachy_512x512.png", "rb"); 
+    pic = fopen(filename, "rb"); 
 
     if( pic == NULL ) { printf("Error opening File\n");} 
 
@@ -45,8 +45,6 @@ unsigned int get_pic(int8_t *buffer){
     }
 
     fclose(pic); 
-
-
     return length;
 
 }
