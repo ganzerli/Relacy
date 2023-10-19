@@ -1,19 +1,20 @@
-// A PRELUDE OF A NEW GENERAL PORPOSE PROGRAMMING LANGUAGE THAT WORKS WELL WITH E-PATHY
+// A PRELUDE OF A NEW GENERAL PORPOSE PROGRAMMING SCRIPTING LANGUAGE THAT WORKS WELL WITH E-PATHY
 
     // those will work on parallel
     // is the list of the variables in the environment of E-pacreept.ec
 
 #define EPACREEP_VARS_NUM 126
+char *vars[EPACREEP_VARS_NUM];
+char *values[EPACREEP_VARS_NUM];
+const char arrayend[] = "arrayend";
 
-    char *vars[EPACREEP_VARS_NUM];
-    char *values[EPACREEP_VARS_NUM];
-    const char arrayend[] = "arrayend";
-
-void epahcreept_prelude(){
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // RESET ALL EPHACREEPT VARIABLE ARCHITECTURE  // //
+void epahcreept_reset(){
     vars[0] = arrayend;
     values[0] = arrayend;
 }
 
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  ADD VAR // // //  // //  // 
 void add_var(char* varname , char* value ){
     unsigned int i = 0;
     while( !str_cmp( str_len(vars[i]) , vars[i] , arrayend ) ){
@@ -27,7 +28,50 @@ void add_var(char* varname , char* value ){
     printf("\nadded var: %s , value: %s\n\n" , vars[i] , values[i] );
 }
 
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // GET VAR // //  // //  //
+char* get_var(char* var_name){
+    unsigned int i = 0;
+    char* ret = "undefined";
+    u8 size = str_len(var_name);
+    while( !str_cmp( str_len(vars[i]) , vars[i] , arrayend ) ){
+        if( str_cmp(size , var_name ,vars[i]) ) return values[i];
+        printf("\npresent: %s = %s" ,vars[i] ,values[i] );
+        i++;
+    }
+    return ret;
+}
 
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // POPULATE STRINS WITH VALUES IN VARS // // 
+void populate_strgs(char** strings , unsigned int count){
+    char *current_s;
+    unsigned int length;
+    unsigned int j;
+    //                   v <<----[]
+    char* replace_string(char* str1 , char* str2){
+        const unsigned int length = str_len(str2);
+        str1 = malloc( sizeof (char) * length );
+        for(int i = 0; i < length; i++){
+            str1[i] = str2[i];
+        }   
+        str1[length] = '\0';
+        return str1;
+    }
+    // looping throught many strings
+    for (unsigned int i = 0; i < count; i++){
+        j=0;
+        // looping throught the variables of epacreept
+        while( !str_cmp( str_len(vars[j]) , vars[j] , arrayend ) ){
+            length = str_len(vars[j]);
+            if( str_cmp(length , strings[i] , vars[j] ) ){
+                free(strings[i]);
+                strings[i] = replace_string(current_s , values[j]);
+            }
+            j++;
+        }
+    }
+}
+
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // POPULATE STRINS WITH VALUES IN VARS // // 
 // this function is to keep as it is.. dont modulate it
 int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
     unsigned int i = 0;
@@ -60,14 +104,13 @@ int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
     while (c != '\0'){
         if(c == frs_c){
             // check if
-            index_end = delicious_lasagna( text , i , "<-" , "->");
+            index_end = delicious_lasagna( text , i , from , to);
             if(index_end != 0){
                 indexes[counter] = i;
                 indexes[counter+1] = index_end;
                 i = index_end;
                 index_end = 0;
                 counter += 2;
-                printf("i = %u \n" , i);
             }else{
                 break;
             }     

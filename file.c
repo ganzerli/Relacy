@@ -27,6 +27,15 @@ unsigned int file_load(char *buffer , char* filename){
     return count;
 }
 
+void file_wirte(char *text , char* filename){
+    // creating file pointer to work with files
+    FILE *fptr = fopen("filename", "w"); 
+    // exiting program 
+    if (fptr == NULL) printf("Error opening %s" , filename);
+    fprintf(fptr, "%s", text);
+    fclose(fptr);
+}
+
 
 unsigned int get_pic(int8_t *buffer , char*filename){
 
