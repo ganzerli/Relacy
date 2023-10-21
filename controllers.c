@@ -36,22 +36,19 @@ void ctrl_home(){
     
     populate_strgs(substrings , strgs_count);
 
-    for (int i = 0; i < strgs_count; i++){
-        printf("\n[%d] --%s" ,i,  substrings[i]);
-    }
+    // for (int i = 0; i < strgs_count; i++){
+    //     printf("\n[%d] --%s" ,i,  substrings[i]);
+    // }
     free(substrings);
 
     ///// JSON JSON JSON
-    char * data_map = "{\"abc\"{\"aa\":\"ihuia\"},\"aba\"{\"dole\":\"ihui\" , \"curva\":{\"ihui\":\"pird\" , \"pierd\": \"jebane\"}}}";
-    char * data_arr = "[{\"aa\":\"ihuia\"},{\"pier\":\"ihui\"}]";
-
+    char* dt = "{\"data\": [{\"type\": \"articles\",\"id\": \"1\",\"attributes\": {\"title\": \"JSON:API paints my bikeshed!\",\"body\": \"The shortest article. Ever.\"},\"relationships\": {\"author\": {\"data\": {\"id\": \"42\", \"type\": \"people\"}}}}],\"included\": [{\"type\": \"people\",\"id\": \"42\",\"attributes\": {\"name\": \"John\"}}]}";
     char* data = malloc( 256 * sizeof(char) );
-    str_cpy(data , data_arr);
+    str_cpy(data , dt);
 
     JSON_parse(data);
+    JSON_print(data);
     
-    printf("\n%s\n" , data);
-
     free(data);
     
     // just remembering how it was without epahcreept...

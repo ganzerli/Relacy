@@ -270,6 +270,39 @@ void JSON_parse(char*data){
 }
 
 
+void JSON_print(char*data){
+    u8 depth = 0;
+    unsigned int i = 0;
+    char c = data[i];
+    u8 occurred = 1;
+    int last_depth = 0;
+    void occurring(){
+        for (u8 i = 0; i < depth; i++){
+            printf("%s" , "   ");
+        }
+    }
+    printf("\n");
+    while( c != '\0' ){
+        if(occurred){
+            occurring();
+            occurred = 0;
+        }
+        if( c == '{' ){ depth++; printf("%c\n",c); occurred = 1;}  
+        if( c == '[' ){ depth++; printf("%c\n",c); occurred = 1;}
+        if( c == '}' ){ depth--; printf("\n"); occurring(); printf("%c" , c);}
+        if( c == ']' ){ depth--; printf("\n"); occurring(); printf("%c" , c);}
+        if( c == ',' ){ printf(",\n"); last_depth=99; occurring();}
+        if(last_depth == depth){
+            printf("%c" , c);
+        }
+        last_depth = depth;
+        i++;
+        c = data[i];
+    }
+    printf("\n");
+}
+
+
 
 //    J S O N    J S O N          /    J S O N       J  J    S S S S    O O O O    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N        /      J S O N          J    S          0     0    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
