@@ -164,3 +164,116 @@ unsigned int split_n_keep(char** substrings, char* text){
 }
 
 
+//    J S O N    J S O N    J S O N    J S O N       J  J    S S S S    O O O O    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N    J S O N    J S O N          J    S          0     0    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N    J S O N    J S O N          J    S S S S    O     O    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N    J S O N    J S O N          J          S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N    J S O N    J S O N        J            S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N    J S O N    J S O N    J J        S S S S    0 0 0 0    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+
+u8 JSON_check_depth(char*data){
+    unsigned int begins = 0;
+    unsigned int ends = 0;
+    unsigned int i = 0;
+    u8 max_depth = 0;
+    
+    // check if begin contains any
+    char c = data[i];
+
+    while ( c != '\0'  ){
+        if( c == '{' ) begins++;           
+        if( c == '[' ) begins++;   
+
+        if( c == '}' ) ends++;           
+        if( c == ']' ) ends++;   
+
+        //printf("\n%u\n",  (begins - ends) );
+        if( (begins - ends) > max_depth) max_depth++;
+        i++;
+        c = data[i];
+    }
+    return max_depth;
+} 
+
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // GET SURROUNDING BRACKETS AWAY {} OR [] // //
+u8 JSON_uncover(char*data){
+    u8 defined = 0;
+    if(data[0] == '['){
+        defined = 1;
+        // is array
+    }
+    if(data[0] == '{'){
+        defined = 1;
+        // is object
+    }
+    if(!defined){
+        return 0;
+    }
+
+    unsigned int count = str_len(data);
+
+    for(unsigned int i = 1; i < count-1; i++){
+        data[i-1] = data[i];
+    }
+    data[count - 2] = '\0';
+    return 1;
+}
+
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // REPLACE , WITH \n IN FIRST LAYER -> CURRENT STRING // //
+void JSON_split_layer(char* data){
+    u8 depth = 0;
+    unsigned int i = 0;
+    char c = data[i];
+
+    while( c != '\0' ){
+        if( c == '{' ) depth++;           
+        if( c == '[' ) depth++;   
+        if( c == '}' ) depth--;           
+        if( c == ']' ) depth--;   
+
+        // when depth is the same layer 
+        if(depth == 0){
+            if(c == ','){
+                data[i] = '\n';
+            }
+        }        
+        i++;
+        c = data[i];
+    }
+
+}
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // REMOVES ALL "" // //
+void JSON_unstring(char*data){
+    unsigned int offset = 0;
+    unsigned int  i = 0;
+    char c = data[i];
+
+    while (c != '\0'){
+       // printf("%c" , c);
+
+        if( (c != '\"') && (c != ' ') ){
+            data[offset] = c;
+            offset++;
+        }
+
+        i++;
+        c= data[i];
+    }
+    data[offset] = '\0';
+    
+}
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  FIRST ACTION TO DO, TO PREPEARE DATA FOR EXTRACTING // //
+void JSON_parse(char*data){
+    JSON_unstring(data);
+    if(!JSON_uncover(data)) printf("\n\n!!! JSON ERROR !!!\n\n json format returning: undefined \n Is supported only array[,,,] or object{a,a,a} ");
+    JSON_split_layer(data);
+}
+
+
+
+//    J S O N    J S O N          /    J S O N       J  J    S S S S    O O O O    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N        /      J S O N          J    S          0     0    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N      / /      J S O N          J    S S        O     O    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N      /        J S O N          J        S S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N    /          J S O N        J            S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
+//    J S O N    J S O N    /          J S O N    J J        S S S S    0 0 0 0    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N  

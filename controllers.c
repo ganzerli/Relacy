@@ -23,6 +23,7 @@ void ctrl_favicon(){
 // '/'
 void ctrl_home(){
 
+    // EPAHCREEPT
     epahcreept_reset();
     add_var("<-ANUSHKA->"  , "<h2>Hi, I am Anushka</h2>");
     add_var("<-12345->"  , "<p>this is a paragraph , and as all paragraps theres a lot of text here..</p>");
@@ -39,6 +40,19 @@ void ctrl_home(){
         printf("\n[%d] --%s" ,i,  substrings[i]);
     }
     free(substrings);
+
+    ///// JSON JSON JSON
+    char * data_map = "{\"abc\"{\"aa\":\"ihuia\"},\"aba\"{\"dole\":\"ihui\" , \"curva\":{\"ihui\":\"pird\" , \"pierd\": \"jebane\"}}}";
+    char * data_arr = "[{\"aa\":\"ihuia\"},{\"pier\":\"ihui\"}]";
+
+    char* data = malloc( 256 * sizeof(char) );
+    str_cpy(data , data_arr);
+
+    JSON_parse(data);
+    
+    printf("\n%s\n" , data);
+
+    free(data);
     
     // just remembering how it was without epahcreept...
     add_response_header("Server: E-pache 1.0");
