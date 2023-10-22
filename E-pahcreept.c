@@ -163,7 +163,6 @@ unsigned int split_n_keep(char** substrings, char* text){
     return i+1;
 }
 
-
 //    J S O N    J S O N    J S O N    J S O N       J  J    S S S S    O O O O    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    J S O N    J S O N          J    S          0     0    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    J S O N    J S O N          J    S S S S    O     O    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
@@ -200,13 +199,12 @@ u8 JSON_uncover(char*data){
     u8 defined = 0;
     if(data[0] == '['){
         defined = 1;
-        // is array
     }
     if(data[0] == '{'){
-        defined = 1;
-        // is object
+        defined = 2;
     }
     if(!defined){
+        printf("error: segment not correctly wrapped");
         return 0;
     }
 
@@ -302,6 +300,59 @@ void JSON_print(char*data){
     printf("\n");
 }
 
+// get data from object having the right name
+char* JSON_get(char*resultbf , char* data , char* search ){
+    unsigned int i = 0;
+    char c = data[i];
+// get over : uncover -'[' ... -']'  or -'{' ... -'}' and replace , with '\n' in first layer
+    void format_data(char* result){
+        u8 i = 0;
+        // find ":"
+        while (result[i] != ':')i++;
+        str_cpy( result , &result[i+1]);
+        JSON_uncover(result);
+        JSON_split_layer(result);
+        return;
+    }
+// get data from this point..
+    void load_data(char* datap_){
+        unsigned int i = 0;
+        while (datap_[i] != '\n'){
+            resultbf[i] = datap_[i];
+            i++;
+            if(datap_[i]=='\0'){
+                resultbf[i] = '\0';
+                return;
+            }
+        }
+    }
+    // first char:
+    if( str_cmp( str_len(search) ,  search , data ) ) {
+        load_data(data);
+        format_data(resultbf);
+        return resultbf;
+    }
+
+    // if new occourrence  '\n'
+    while (c != '\0'){
+        if( c == '\n' ){
+            if( str_cmp( str_len(search) ,  search , &data[i+1] ) ) {
+                load_data(&data[i+1]);
+                format_data(resultbf);
+                return resultbf;
+            }
+        }
+        i++;
+        c = data[i];
+    }
+    str_cpy(resultbf , "[{searched:undefined},{error: something went wrong, in JSON_get}]");
+    return resultbf;
+}
+
+char* JSON_get_ar(char* resultbf, char* data, unsigned int search){
+    resultbf[0] = '\0';
+}
+
 
 
 //    J S O N    J S O N          /    J S O N       J  J    S S S S    O O O O    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
@@ -310,3 +361,4 @@ void JSON_print(char*data){
 //    J S O N    J S O N      /        J S O N          J        S S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    /          J S O N        J            S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    /          J S O N    J J        S S S S    0 0 0 0    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N  
+

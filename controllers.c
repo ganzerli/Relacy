@@ -35,22 +35,22 @@ void ctrl_home(){
     substrings = realloc(substrings , sizeof(char*) * strgs_count );
     
     populate_strgs(substrings , strgs_count);
-
     // for (int i = 0; i < strgs_count; i++){
     //     printf("\n[%d] --%s" ,i,  substrings[i]);
     // }
     free(substrings);
 
-    ///// JSON JSON JSON
-    char* dt = "{\"data\": [{\"type\": \"articles\",\"id\": \"1\",\"attributes\": {\"title\": \"JSON:API paints my bikeshed!\",\"body\": \"The shortest article. Ever.\"},\"relationships\": {\"author\": {\"data\": {\"id\": \"42\", \"type\": \"people\"}}}}],\"included\": [{\"type\": \"people\",\"id\": \"42\",\"attributes\": {\"name\": \"John\"}}]}";
-    char* data = malloc( 256 * sizeof(char) );
+    ///// JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON 
+    char* dt = "{\"data\": [{\"type\": \"articles\",\"id\": \"1\",\"attributes\": {\"title\": \"JSON:API paints my bikeshed!\",\"body\": \"The shortest article. Ever.\"},\"relationships\": {\"author\": {\"data\": {\"id\": \"42\", \"type\": \"people\"}}}}],\"included\": [{\"type\": \"people\",\"id\": \"42\",\"attributes\": {\"name\": \"John\"}},{\"type\": \"people\",\"id\": \"24\",\"attributes\": {\"name\": \"Doe\"}}]}";
+    char result_buffer[1024];
+    char data [1024];
     str_cpy(data , dt);
-
+    //JSON_print(data);
     JSON_parse(data);
-    JSON_print(data);
-    
-    free(data);
-    
+    //JSON_print(data);
+    JSON_get(result_buffer , data , "included");
+    JSON_print(result_buffer);
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     // just remembering how it was without epahcreept...
     add_response_header("Server: E-pache 1.0");
     response_send_file("views/html.html");
