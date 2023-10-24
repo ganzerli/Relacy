@@ -124,6 +124,24 @@ struct index* strpreprocess(char* splitter , char* str){
     return idx_s;
 }
 
+// # # # # # # # # # # # # # # # # # # # # # # # # # # #     K E E P   T R A C K   O F   S T R I N G S   I N   T H E   H E A P     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+void * strings_in_heap[4096];
+unsigned int strings_in_heap_count = 0;
+
+void track_string( void *p ){
+    strings_in_heap[strings_in_heap_count] = p;
+    strings_in_heap_count++;   
+}
+
+void str_free_all(){
+    for (size_t i = 0; i < strings_in_heap_count; i++){
+        free(strings_in_heap[i]);
+    }
+    strings_in_heap_count = 0;
+}
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
 // //  // //  // //  // //  // //  // //  // //  // //  // //  // // GET ARRAY OF POINTERS FOR STRINGS // //  // //  // //  // //  
 char ** str_split(char* splitter , char* str){
     // getting struct array of data abou splitting
@@ -135,6 +153,8 @@ char ** str_split(char* splitter , char* str){
     // get substring from to following index structure
     char* new_string_from(char* str , unsigned int index , unsigned int size){
         char* newstr = malloc( (sizeof (char) * size) + 1 );
+        // keep count of strings on the heap
+        track_string(newstr);
         for (unsigned int i = 0; i < size; i++){
             newstr[i] = str[index + i];
         }
@@ -150,6 +170,7 @@ char ** str_split(char* splitter , char* str){
     // is already count, but just in this unix time
     set_strgs_counter(count);
     free(idx_s);
+    track_string(splitted_strings);
     return splitted_strings;
 }
 
