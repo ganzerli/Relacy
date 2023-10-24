@@ -45,11 +45,22 @@ void ctrl_home(){
     char result_buffer[1024];
     char data [1024];
     str_cpy(data , dt);
-    //JSON_print(data);
+    JSON_print(data);
     JSON_parse(data);
-    //JSON_print(data);
+    JSON_print(data);
+    
     JSON_get(result_buffer , data , "included");
     JSON_print(result_buffer);
+
+    JSON_get_array(result_buffer, result_buffer , 1);
+    JSON_print(result_buffer);
+
+    JSON_get(result_buffer , result_buffer , "attributes");
+    JSON_print(result_buffer);
+
+    JSON_get(result_buffer , result_buffer , "name");
+    JSON_print(result_buffer);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // just remembering how it was without epahcreept...
     add_response_header("Server: E-pache 1.0");

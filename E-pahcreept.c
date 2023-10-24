@@ -204,12 +204,12 @@ u8 JSON_uncover(char*data){
         defined = 2;
     }
     if(!defined){
-        printf("error: segment not correctly wrapped");
+        //printf("error: segment not correctly wrapped");
         return 0;
     }
 
     unsigned int count = str_len(data);
-
+    // just copy everything out of first and last char { [ or } ]
     for(unsigned int i = 1; i < count-1; i++){
         data[i-1] = data[i];
     }
@@ -304,14 +304,14 @@ void JSON_print(char*data){
 char* JSON_get(char*resultbf , char* data , char* search ){
     unsigned int i = 0;
     char c = data[i];
-// get over : uncover -'[' ... -']'  or -'{' ... -'}' and replace , with '\n' in first layer
+
     void format_data(char* result){
         u8 i = 0;
         // find ":"
-        while (result[i] != ':')i++;
-        str_cpy( result , &result[i+1]);
-        JSON_uncover(result);
-        JSON_split_layer(result);
+        while (result[i] != ':')i++;                            
+        str_cpy( result , &result[i+1]);                            // get over :
+        JSON_uncover(result);                                       // uncover -'[' ... -']'  or -'{' ... -'}' 
+        JSON_split_layer(result);                                   // and replace ',' with '\n' in same layer
         return;
     }
 // get data from this point..
@@ -325,8 +325,10 @@ char* JSON_get(char*resultbf , char* data , char* search ){
                 return;
             }
         }
+        resultbf[i] = '\0';
     }
-    // first char:
+
+    // if first occourrence
     if( str_cmp( str_len(search) ,  search , data ) ) {
         load_data(data);
         format_data(resultbf);
@@ -349,8 +351,41 @@ char* JSON_get(char*resultbf , char* data , char* search ){
     return resultbf;
 }
 
-char* JSON_get_ar(char* resultbf, char* data, unsigned int search){
-    resultbf[0] = '\0';
+char* JSON_get_array(char* resultbf, char* data, unsigned int search){
+    unsigned int i = 0;
+    unsigned int indexes[2048];
+    indexes[0] = 0;                                                                     // set 0 as first index
+    unsigned int idxs_itr = 1;                                                          // [0] is set, +1
+
+    char c = data[i];
+    // get indexes
+    while (c != '\0'){   
+        if(c == '\n'){
+            indexes[idxs_itr] = i+1;                                                    // get over '\n' setting next index
+            //i++;
+            idxs_itr++;
+        }
+        i++;
+        c = data[i];
+    }
+
+    // all the others contain '\n' at the end! , so last can have '\0', easier for keeping same format
+
+    indexes[idxs_itr] = i-1;                                                            
+    char result[ indexes[search+1] - indexes[search]];
+
+    // loop gets over'\n' to get next index, next index -1 = '\n' , -2 last char
+    if( search != idxs_itr-1 ){
+        sub_str(result , data, indexes[search] , (indexes[search+1] -2 ) );
+
+    }else{
+        // only the last index has the right index as "last char"
+        sub_str(result , data, indexes[search] , indexes[search+1] );
+    }
+    JSON_uncover(result);
+    JSON_split_layer(result);
+    str_cpy( resultbf , result );
+    return resultbf;
 }
 
 
@@ -361,4 +396,3 @@ char* JSON_get_ar(char* resultbf, char* data, unsigned int search){
 //    J S O N    J S O N      /        J S O N          J        S S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    /          J S O N        J            S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    /          J S O N    J J        S S S S    0 0 0 0    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N  
-
