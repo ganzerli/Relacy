@@ -25,16 +25,24 @@ void ctrl_home(){
 
     // EPAHCREEPT
     epahcreept_reset();
-    add_var("<-ANUSHKA->"  , "<h2>Hi, I am Anushka</h2>");
+    add_var("<-VARNAME_1->"  , "<h2>Hi, I am Josefine</h2>");
     add_var("<-12345->"  , "<p>this is a paragraph , and as all paragraps theres a lot of text here..</p>");
 
-    char text[] = "abcdefg<-123-> abcdef <-ANUSHKA-> abc abfcdadolfefg <-12345->  i234567 <-ANUSHKA->  abc abc abcde <-abc-> <-12345->  <-ab-> <-abcd->abc";
+    char text[] = "abcdefg<-123-> abcdef <-VARNAME_1-> abc abfcdadolfefg <-12345->  i234567 <-VARNAME_1->  abc abc abcde <-abc-> <-12345->  <-ab-> <-abcd->abc";
 
     char** substrings = malloc( sizeof (char*) * 126);
     unsigned int strgs_count = split_n_keep( substrings , text );
     substrings = realloc(substrings , sizeof(char*) * strgs_count );
     
-    populate_strgs(substrings , strgs_count);
+    var_to_values(substrings , strgs_count);
+
+    printf("\nvar count %u" , var_count());
+    printf("\nvar found at %u" , var_find("<-VARNAME_1->"));
+    var_concat("<-VARNAME_1->" , "<h3> and so I am. </h3>" );
+    printf("var new concatenated value %s" , get_var("<-VARNAME_1->"));
+
+    
+    var_to_values(substrings , strgs_count);
     // for (int i = 0; i < strgs_count; i++){
     //     printf("\n[%d] --%s" ,i,  substrings[i]);
     // }

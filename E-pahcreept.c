@@ -3,7 +3,13 @@
     // those will work on parallel
     // is the list of the variables in the environment of E-pacreept.ec
 
-#define EPACREEP_VARS_NUM 126
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef __uint8_t u8;
+#include "alphabet.c"
+
+#define EPACREEP_VARS_NUM 128
 char *vars[EPACREEP_VARS_NUM];
 char *values[EPACREEP_VARS_NUM];
 const char arrayend[] = "arrayend";
@@ -14,6 +20,38 @@ void epahcreept_reset(){
     values[0] = arrayend;
 }
 
+unsigned int var_count(){
+    unsigned int i = 0;
+    while( !str_cmp( str_len(vars[i]) , vars[i] , arrayend ) ){
+        printf("\npresent: %s = %s" ,vars[i] ,values[i] );
+        i++;
+    }
+    return i;
+}
+
+unsigned int var_find(char* varname){
+    unsigned int i = 0;
+    u8 size = str_len(varname);
+    while( !str_cmp( str_len(vars[i]) , vars[i] , arrayend ) ){
+        if( str_cmp(size , varname ,vars[i]) ) return i;
+        i++;
+    }
+
+    return EPACREEP_VARS_NUM +1;
+
+}
+
+void var_concat(char* varname, char* data){
+    unsigned int index = var_find(varname);
+    char* old_p = values[index];
+    unsigned int old_length = str_len(old_p);
+    char * new_string = malloc( sizeof (char) * (str_len(data) + old_length + 1 ) );
+    str_cat(new_string , old_p , data );
+    printf("new string: %s" , new_string);
+    free(old_p);
+    values[index] = new_string;
+}
+
 // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  ADD VAR // // //  // //  // 
 void add_var(char* varname , char* value ){
     unsigned int i = 0;
@@ -21,8 +59,9 @@ void add_var(char* varname , char* value ){
         printf("\npresent: %s = %s" ,vars[i] ,values[i] );
         i++;
     }
+    char* p = malloc(sizeof(char) * str_len(value));
     vars[i] = varname; 
-    values[i] = value;
+    values[i] = p;
     vars[i+1] = arrayend;
     values[i+1] = arrayend;
     printf("\nadded var: %s , value: %s\n\n" , vars[i] , values[i] );
@@ -42,7 +81,7 @@ char* get_var(char* var_name){
 }
 
 // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // POPULATE STRINS WITH VALUES IN VARS // // 
-void populate_strgs(char** strings , unsigned int count){
+void var_to_values(char** strings , unsigned int count){
     char *current_s;
     unsigned int length;
     unsigned int j;
@@ -121,7 +160,7 @@ int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
     return counter;
 }
 
-
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // SPLIT THROUGHT "str" KEEP ALSO str // // 
 unsigned int split_n_keep(char** substrings, char* text){
     unsigned int size = 0;
     unsigned int indexes[512];
