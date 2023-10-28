@@ -28,25 +28,36 @@ void ctrl_home(){
     add_var("<-VARNAME_1->"  , "<h2>Hi, I am Josefine</h2>");
     add_var("<-12345->"  , "<p>this is a paragraph , and as all paragraps theres a lot of text here..</p>");
 
-    char text[] = "abcdefg<-123-> abcdef <-VARNAME_1-> abc abfcdadolfefg <-12345->  i234567 <-VARNAME_1->  abc abc abcde <-abc-> <-12345->  <-ab-> <-abcd->abc";
+   // char text[] = "abcdefg<-123-> abcdef <-VARNAME_1-> abc abfcdadolfefg<div>hello here</div> abc abcd  <-12345->  i234567 <-VARNAME_1->  abc abc abcde <-abc-> <-12345->  <-ab-> <-abcd->abc";
+    //char text[] =" <!DOCUMENT html> hello <-12345-> </body></html>";
+    char bf[1024]; 
+    file_load(bf,"views/html.html");
+
+    printf("\n---%s----------------\n" , bf);
 
     char** substrings = malloc( sizeof (char*) * 126);
-    unsigned int strgs_count = split_n_keep( substrings , text );
+    unsigned int strgs_count = split_n_keep( substrings , bf );
     substrings = realloc(substrings , sizeof(char*) * strgs_count );
     
-    var_to_values(substrings , strgs_count);
+    char buffer[1024];
+    var_to_values(buffer,substrings , strgs_count);
 
-    printf("\nvar count %u" , var_count());
-    printf("\nvar found at %u" , var_find("<-VARNAME_1->"));
-    var_concat("<-VARNAME_1->" , "<h3> and so I am. </h3>" );
-    printf("var new concatenated value %s" , get_var("<-VARNAME_1->"));
+    printf("\n\n%s\n\n" ,buffer);
+
+    file_write(buffer, "views/html.html");
+
+    // printf("\nvar count %u" , var_count());
+    // printf("\nvar found at %u" , var_find("<-VARNAME_1->"));
+    // var_concat("<-VARNAME_1->" , "<h3> and so I am. </h3>" );
+    // printf("var new concatenated value %s" , get_var("<-VARNAME_1->"));
 
     
-    var_to_values(substrings , strgs_count);
+    //var_to_values(substrings , strgs_count);
     // for (int i = 0; i < strgs_count; i++){
     //     printf("\n[%d] --%s" ,i,  substrings[i]);
     // }
     free(substrings);
+    //free(bf);
 
     ///// JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON 
     char* dt = "{\"data\": [{\"type\": \"articles\",\"id\": \"1\",\"attributes\": {\"title\": \"JSON:API paints my bikeshed!\",\"body\": \"The shortest article. Ever.\"},\"relationships\": {\"author\": {\"data\": {\"id\": \"42\", \"type\": \"people\"}}}}],\"included\": [{\"type\": \"people\",\"id\": \"42\",\"attributes\": {\"name\": \"John\"}},{\"type\": \"people\",\"id\": \"24\",\"attributes\": {\"name\": \"Doe\"}}]}";

@@ -1,13 +1,12 @@
-// A PRELUDE OF A NEW GENERAL PORPOSE PROGRAMMING SCRIPTING LANGUAGE THAT WORKS WELL WITH E-PATHY
-
-    // those will work on parallel
-    // is the list of the variables in the environment of E-pacreept.ec
-
 #include <stdlib.h>
 #include <stdio.h>
 
 typedef __uint8_t u8;
-#include "alphabet.c"
+
+// A PRELUDE OF A NEW GENERAL PORPOSE PROGRAMMING SCRIPTING LANGUAGE THAT WORKS WELL WITH E-PATHY
+
+    // those will work on parallel
+    // is the list of the variables in the environment of E-pacreept.ec
 
 #define EPACREEP_VARS_NUM 128
 char *vars[EPACREEP_VARS_NUM];
@@ -60,6 +59,7 @@ void add_var(char* varname , char* value ){
         i++;
     }
     char* p = malloc(sizeof(char) * str_len(value));
+    str_cpy(p , value);
     vars[i] = varname; 
     values[i] = p;
     vars[i+1] = arrayend;
@@ -81,7 +81,7 @@ char* get_var(char* var_name){
 }
 
 // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // POPULATE STRINS WITH VALUES IN VARS // // 
-void var_to_values(char** strings , unsigned int count){
+void var_to_values(char* buffer, char** strings , unsigned int count){
     char *current_s;
     unsigned int length;
     unsigned int j;
@@ -108,6 +108,11 @@ void var_to_values(char** strings , unsigned int count){
             j++;
         }
     }
+    buffer[0]='\0';                                                     // preventing sparkling
+    // joining string 
+     for (unsigned int i = 0; i < count; i++){
+        str_cat(buffer , buffer , strings[i]);
+     }
 }
 
 // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // POPULATE STRINS WITH VALUES IN VARS // // 
@@ -136,7 +141,7 @@ int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
                 j++;
             }
         } 
-        return 0;
+        return i;
     }
     unsigned int counter = 0;
     unsigned int index_end = 0;
