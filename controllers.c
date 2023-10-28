@@ -25,65 +25,48 @@ void ctrl_home(){
 
     // EPAHCREEPT
     epahcreept_reset();
-    add_var("<-VARNAME_1->"  , "<h2>Hi, I am Josefine</h2>");
+    //add_var("<-VARNAME_1->"  , "<h2>Hi, I am Josefine</h2>");
     add_var("<-12345->"  , "<p>this is a paragraph , and as all paragraps theres a lot of text here..</p>");
 
-   // char text[] = "abcdefg<-123-> abcdef <-VARNAME_1-> abc abfcdadolfefg<div>hello here</div> abc abcd  <-12345->  i234567 <-VARNAME_1->  abc abc abcde <-abc-> <-12345->  <-ab-> <-abcd->abc";
-    //char text[] =" <!DOCUMENT html> hello <-12345-> </body></html>";
+    // load html file with e-pahcreep syntax in it
     char bf[1024]; 
     file_load(bf,"views/html.html");
 
-    printf("\n---%s----------------\n" , bf);
-
+    // can be better
     char** substrings = malloc( sizeof (char*) * 126);
     unsigned int strgs_count = split_n_keep( substrings , bf );
     substrings = realloc(substrings , sizeof(char*) * strgs_count );
     
-    char buffer[1024];
-    var_to_values(buffer,substrings , strgs_count);
+    // change variables in html of file with values
+    var_to_values(bf,substrings , strgs_count);
 
-    printf("\n\n%s\n\n" ,buffer);
-
-    file_write(buffer, "views/html.html");
-
-    // printf("\nvar count %u" , var_count());
-    // printf("\nvar found at %u" , var_find("<-VARNAME_1->"));
-    // var_concat("<-VARNAME_1->" , "<h3> and so I am. </h3>" );
-    // printf("var new concatenated value %s" , get_var("<-VARNAME_1->"));
-
-    
-    //var_to_values(substrings , strgs_count);
-    // for (int i = 0; i < strgs_count; i++){
-    //     printf("\n[%d] --%s" ,i,  substrings[i]);
-    // }
+    //  create tempfile for html
+    file_write(bf, "tempfile.html");
     free(substrings);
-    //free(bf);
 
     ///// JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON JSON 
-    char* dt = "{\"data\": [{\"type\": \"articles\",\"id\": \"1\",\"attributes\": {\"title\": \"JSON:API paints my bikeshed!\",\"body\": \"The shortest article. Ever.\"},\"relationships\": {\"author\": {\"data\": {\"id\": \"42\", \"type\": \"people\"}}}}],\"included\": [{\"type\": \"people\",\"id\": \"42\",\"attributes\": {\"name\": \"John\"}},{\"type\": \"people\",\"id\": \"24\",\"attributes\": {\"name\": \"Doe\"}}]}";
-    char result_buffer[1024];
-    char data [1024];
-    str_cpy(data , dt);
-    JSON_print(data);
-    JSON_parse(data);
-    JSON_print(data);
-    
-    JSON_get(result_buffer , data , "included");
-    JSON_print(result_buffer);
-
-    JSON_get_array(result_buffer, result_buffer , 1);
-    JSON_print(result_buffer);
-
-    JSON_get(result_buffer , result_buffer , "attributes");
-    JSON_print(result_buffer);
-
-    JSON_get(result_buffer , result_buffer , "name");
-    JSON_print(result_buffer);
+    // char* dt = "{\"data\": [{\"type\": \"articles\",\"id\": \"1\",\"attributes\": {\"title\": \"JSON:API paints my bikeshed!\",\"body\": \"The shortest article. Ever.\"},\"relationships\": {\"author\": {\"data\": {\"id\": \"42\", \"type\": \"people\"}}}}],\"included\": [{\"type\": \"people\",\"id\": \"42\",\"attributes\": {\"name\": \"John\"}},{\"type\": \"people\",\"id\": \"24\",\"attributes\": {\"name\": \"Doe\"}}]}";
+    // char result_buffer[1024];
+    // char data [1024];
+    // str_cpy(data , dt);
+    // JSON_print(data);
+    // JSON_parse(data);
+    // JSON_print(data);
+    // JSON_get(result_buffer , data , "included");
+    // JSON_print(result_buffer);
+    // JSON_get_array(result_buffer, result_buffer , 1);
+    // JSON_print(result_buffer);
+    // JSON_get(result_buffer , result_buffer , "attributes");
+    // JSON_print(result_buffer);
+    // JSON_get(result_buffer , result_buffer , "name");
+    // JSON_print(result_buffer);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // just remembering how it was without epahcreept...
     add_response_header("Server: E-pache 1.0");
-    response_send_file("views/html.html");
+    response_send_file("tempfile.html");
+    // remove temp file
+    remove("tempfile.html");
 }
 
 // // // // // // // // // // // // // // // // // // // // // POST CONTROLLERS

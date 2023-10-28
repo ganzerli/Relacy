@@ -19,17 +19,18 @@ unsigned int file_load(char *buffer , char* filename){
     char c = fgetc(fp);
     unsigned int count = 0;
     while ( c != EOF){
-        buffer[count++] = c;
+        buffer[count] = c;
         c = fgetc(fp);
+        count++;
     }
     buffer[count] = '\0';
     fclose(fp);
     return count;
 }
 
-void file_wirte(char *text , char* filename){
+void file_write(char *text , char* filename){
     // creating file pointer to work with files
-    FILE *fptr = fopen("filename", "w"); 
+    FILE *fptr = fopen(filename, "w"); 
     // exiting program 
     if (fptr == NULL) printf("Error opening %s" , filename);
     fprintf(fptr, "%s", text);
