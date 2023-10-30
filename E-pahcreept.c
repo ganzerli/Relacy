@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef __uint8_t u8;
-
 // A PRELUDE OF A NEW GENERAL PORPOSE PROGRAMMING SCRIPTING LANGUAGE THAT WORKS WELL WITH E-PATHY
 
     // those will work on parallel
@@ -112,16 +110,17 @@ void var_to_values(char* buffer, char** strings , unsigned int count){
     // joining string 
      for (unsigned int i = 0; i < count; i++){
         str_cat(buffer , buffer , strings[i]);
+        free(strings[i]);
      }
 }
 
 // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // POPULATE STRINS WITH VALUES IN VARS // // 
 // this function is to keep as it is.. dont modulate it
 int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
-    unsigned int i = 0;
+
     char frs_c = from[0];
     char lst_c = to[ ( str_len(to)-1 ) ];
-    char c = text[0];
+
     unsigned int delicious_lasagna(char* text, unsigned int i , char* begin  , char* end) {
         u8 bg_sz = str_len(begin);
         u8 nd_sz = str_len(end);
@@ -145,8 +144,9 @@ int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
     }
     unsigned int counter = 0;
     unsigned int index_end = 0;
-    while (c != '\0'){
-        if(c == frs_c){
+    unsigned int len = str_len(text);
+    for (unsigned int i = 0; i < len; i++){
+        if(text[i] == frs_c){
             // check if
             index_end = delicious_lasagna( text , i , from , to);
             if(index_end != 0){
@@ -155,12 +155,8 @@ int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
                 i = index_end;
                 index_end = 0;
                 counter += 2;
-            }else{
-                break;
-            }     
+            }
         }
-        i++;
-        c = text[i];
     }
     return counter;
 }
@@ -173,7 +169,8 @@ unsigned int split_n_keep(char** substrings, char* text){
     unsigned int i;
     unsigned int j = 0;
     unsigned int lastIndex = 0;
-    unsigned int terator = 0;;
+    unsigned int terator = 0;
+    
     for (i = 0; i < counter; i++){
         //                     0 1 2 3 4 5 6 7 8 9          
         // indexes[i] = 9 = <                   [<][-][a][b][-][>]
@@ -195,7 +192,7 @@ unsigned int split_n_keep(char** substrings, char* text){
         substrings[i] = substring;                                                  // saving new string in strings
     }
     // collect the last part of text
-    char* substring = malloc(  ( str_len(&text[j]) + 1 )  * sizeof (char*)  );
+    char* substring = malloc(  ( str_len(&text[j]) + 1 )  * sizeof (char)  );
     terator = 0;
     while (text[j] != '\0'){
         substring[terator] = text[j];
