@@ -37,9 +37,68 @@ void null_addrinfo( struct addrinfo * s ){
     s->ai_next = NULL;                                                              // next node in linked list, type struct addrinfo*
 }
 
+
+int client_call( char* address , char* port ){
+    const unsigned int MAXDATASIZE = 4096;
+    int sockfd, numbytes;
+    char buf[MAXDATASIZE];
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+    char s[INET6_ADDRSTRLEN];
+
+    null_addrinfo(&hints);                                                          // set whole struct as 0
+    hints.ai_family = AF_UNSPEC;                                                    // IPv4 or IPv6 possible
+    hints.ai_socktype = SOCK_STREAM;
+
+    if ((rv = getaddrinfo(address, port, &hints, &servinfo)) != 0) {                   // GETADDINFO SYSTEM CALL ()
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return 0;
+    }
+
+    // loop through linked list from getaddrinfo syscall and bind to the first suitable found
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+                                
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,p->ai_protocol)) == -1) { // SOCEKT sys call, get file descriptor ()
+            perror("client: socket");
+            continue;
+        }
+
+        if(connect(sockfd, p->ai_addr, p->ai_addrlen) == -1){
+            close(sockfd);
+            perror("client canot connect");
+            continue;
+        }
+        break;                                                                      // if everything good
+    }
+
+    if (p == NULL) {                                                                // no SOCKET fd can BIND ()
+        fprintf(stderr, "server: failed to bind\n");
+        return 0;
+    }
+
+    inet_ntop(p->ai_family, get_in_addr( (struct sockaddr *)p->ai_addr ),s, sizeof s);
+    freeaddrinfo(servinfo);   
+    
+    printf("client: connecting to %s\n", s);
+
+    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+        perror("recv");
+        exit(1);
+    }
+
+    buf[numbytes] = '\0';
+    printf("client: received '%s'\n",buf);
+    close(sockfd);
+
+    return 1;
+
+}
+
+
+
 // GET INFO FROM OPERATIVE SYSTEM AND WAIT FOR CONNECTIONS
 //                                                    queue = how many pending connections can wait before error network busy try later
-unsigned int relacy_listen( char* port , unsigned int queue ){ 
+int relacy_listen( char* port , unsigned int queue ){ 
     int sockfd, new_fd;                                                             // listen on sock_fd, new connection on new_fd
     struct addrinfo hints, *servinfo, *p;                                           // store info from GETADDRINFO syscall , p will be just an alias
     struct sockaddr_storage foreign_addr;                                           // connector's address information
