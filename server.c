@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <openssl/ssl.h>
 
 #include "backend_framework.c"
 
@@ -65,7 +66,7 @@ int client_call( char* address , char* port ){
 
         if(connect(sockfd, p->ai_addr, p->ai_addrlen) == -1){
             close(sockfd);
-            perror("client canot connect");
+            perror("client cannot connect");
             continue;
         }
         break;                                                                      // if everything good
@@ -81,17 +82,48 @@ int client_call( char* address , char* port ){
     
     printf("client: connecting to %s\n", s);
 
-    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+
+
+    // first connect to the remote as usual, but use the port 443 instead of 80
+
+    // initialize OpenSSL - do this once and stash ssl_ctx in a global var
+    SSL_load_error_strings ();
+    SSL_library_init ();
+    SSL_CTX *ssl_ctx = SSL_CTX_new (SSLv23_client_method ());
+
+    // create an SSL connection and attach it to the socket
+    SSL *conn = SSL_new(ssl_ctx);
+    SSL_set_fd(conn, sockfd);
+
+    // perform the SSL/TLS handshake with the server - when on the
+    // server side, this would use SSL_accept()
+    int err = SSL_connect(conn);
+    if (err != 1)
+        printf("error connecting with ssl\n");
+      // abort(); // handle error
+
+    // now proceed with HTTP traffic, using SSL_read instead of recv() and
+    // SSL_write instead of send(), and SSL_shutdown/SSL_free before close()
+
+    char* request = "message";
+    u8 len = str_len(request);
+    
+    if (SSL_write(conn, request, len) == -1){
+            perror("send");
+            return;
+    }
+
+    if ((numbytes = SSL_read(conn, buf, MAXDATASIZE-1 )) == -1) {
         perror("recv");
         exit(1);
     }
 
     buf[numbytes] = '\0';
-    printf("client: received '%s'\n",buf);
+    printf("\n%s\n",buf);
     close(sockfd);
+    SSL_free(conn);
 
     return 1;
-
 }
 
 
