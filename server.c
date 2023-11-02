@@ -58,7 +58,7 @@ int client_call( char* address , char* port ){
 
     // loop through linked list from getaddrinfo syscall and bind to the first suitable found
     for(p = servinfo; p != NULL; p = p->ai_next) {
-                                
+
         if ((sockfd = socket(p->ai_family, p->ai_socktype,p->ai_protocol)) == -1) { // SOCEKT sys call, get file descriptor ()
             perror("client: socket");
             continue;
@@ -66,7 +66,7 @@ int client_call( char* address , char* port ){
 
         if(connect(sockfd, p->ai_addr, p->ai_addrlen) == -1){
             close(sockfd);
-            perror("client cannot connect");
+            perror("client canot connect");
             continue;
         }
         break;                                                                      // if everything good
@@ -79,49 +79,17 @@ int client_call( char* address , char* port ){
 
     inet_ntop(p->ai_family, get_in_addr( (struct sockaddr *)p->ai_addr ),s, sizeof s);
     freeaddrinfo(servinfo);   
-    
+
     printf("client: connecting to %s\n", s);
 
-
-
-    // first connect to the remote as usual, but use the port 443 instead of 80
-
-    // initialize OpenSSL - do this once and stash ssl_ctx in a global var
-    SSL_load_error_strings ();
-    SSL_library_init ();
-    SSL_CTX *ssl_ctx = SSL_CTX_new (SSLv23_client_method ());
-
-    // create an SSL connection and attach it to the socket
-    SSL *conn = SSL_new(ssl_ctx);
-    SSL_set_fd(conn, sockfd);
-
-    // perform the SSL/TLS handshake with the server - when on the
-    // server side, this would use SSL_accept()
-    int err = SSL_connect(conn);
-    if (err != 1)
-        printf("error connecting with ssl\n");
-      // abort(); // handle error
-
-    // now proceed with HTTP traffic, using SSL_read instead of recv() and
-    // SSL_write instead of send(), and SSL_shutdown/SSL_free before close()
-
-    char* request = "message";
-    u8 len = str_len(request);
-    
-    if (SSL_write(conn, request, len) == -1){
-            perror("send");
-            return;
-    }
-
-    if ((numbytes = SSL_read(conn, buf, MAXDATASIZE-1 )) == -1) {
+    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
         perror("recv");
         exit(1);
     }
 
     buf[numbytes] = '\0';
-    printf("\n%s\n",buf);
+    printf("client: received '%s'\n",buf);
     close(sockfd);
-    SSL_free(conn);
 
     return 1;
 }
