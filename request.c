@@ -22,15 +22,12 @@ void manage_request(char *buffer , unsigned int size ){
     char* uri_params = first_line_[1];
    // char line_size = str_len(uri_params);
 
-    printf("\nURI URI URI URI URI URI URI URI URI URI URI URI\n");
-    printf("URI and Params: %s , length: %u" , uri_params , str_len(uri_params));
     char c;
     char *uri = uri_params;
     char *params = uri_params;
 
     for (u8 i = 0; i < str_len(uri_params); i++){
-        c = uri_params[i];
-        if (c == '?'){
+        if (uri_params[i] == '?'){
             uri_params[i] = '\0';                                               // end uri at '?'
             uri = uri_params;               
             params = &uri_params[i+1];                                          // begin of parameters
@@ -45,9 +42,6 @@ void manage_request(char *buffer , unsigned int size ){
     http_request.headers_count  = headers_count ;
     http_request.headers  = headers ;
     http_request.body  =  headers[headers_count-1];
-
-    printf("\n\nuri: %s", http_request.URI);
-    printf("\nparams: %s\n", http_request.params);
 
 
 }
