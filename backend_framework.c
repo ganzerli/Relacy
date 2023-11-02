@@ -11,19 +11,18 @@ void route(char* route , void(*controller)() );
 void router();
 
 
-
-
 // DEFINE HERE YOUR ROUTES ( URI , CONTROLLER )
 void get(){
         route( "/" , ctrl_home );
         route( "/favicon.ico" , ctrl_favicon );
+        // image name will be in a parameter,now is for simplicity but many webistes and also Angular do so, and angular is from google.
+        route( "/images", ctrl_image );
 }
 
 void post(){
         route("/" , ctrl2 );
 }
 
-// NEEDED TO FREE REQUEST STRINGS
 unsigned int backend_framework(char* buffer , unsigned int size){
         unsigned int request_size = size;
         manage_request(buffer , size );
