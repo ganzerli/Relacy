@@ -43,12 +43,12 @@ int client_call( char* address , char* port ){
     const unsigned int MAXDATASIZE = 4096;
     int sockfd, numbytes;
     char buf[MAXDATASIZE];
-    struct addrinfo hints, *servinfo, *p;
+    struct addrinfo hints, *servinfo, *p;                                               // p is an alias to handle linked list
     int rv;
     char s[INET6_ADDRSTRLEN];
 
-    null_addrinfo(&hints);                                                          // set whole struct as 0
-    hints.ai_family = AF_UNSPEC;                                                    // IPv4 or IPv6 possible
+    null_addrinfo(&hints);                                                              // set whole struct as 0
+    hints.ai_family = AF_UNSPEC;                                                        // IPv4 or IPv6 possible
     hints.ai_socktype = SOCK_STREAM;
 
     if ((rv = getaddrinfo(address, port, &hints, &servinfo)) != 0) {                   // GETADDINFO SYSTEM CALL ()
@@ -63,7 +63,6 @@ int client_call( char* address , char* port ){
             perror("client: socket");
             continue;
         }
-
         if(connect(sockfd, p->ai_addr, p->ai_addrlen) == -1){
             close(sockfd);
             perror("client canot connect");
@@ -81,6 +80,13 @@ int client_call( char* address , char* port ){
     freeaddrinfo(servinfo);   
 
     printf("client: connecting to %s\n", s);
+
+    // crete a message for the server
+    str_cpy(buf , "hello from clinet");
+    if (send(sockfd, buf, str_len(buf), 0) < 0){
+        tcperror("Send()");
+        exit(5);
+    }
 
     if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
         perror("recv");

@@ -58,6 +58,14 @@ void ctrl_home(){
 //                      // P O S T    C O N T R O L L E R S
 // '/'
 void ctrl2(){
-        response_send_pic("E-pachy_512x512.png");
+        //response_send_pic("E-pachy_512x512.png");
+        // forwarding to e-pathy
+        client_call( "127.0.0.1." , "8680" )
+        char bf[] = "<p>e-pathy responded wiht: hello, i am e-pathy</p>"
+
+        //  create tempfile for html
+        file_write(bf, "tempfile.html");
+        response_send_file("tempfile.html");
+        remove("tempfile.html")
 
 }
