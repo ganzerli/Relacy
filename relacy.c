@@ -4,7 +4,6 @@
 // ibraries
 typedef __uint8_t u8;
 #include "file.c"
-#include "outputs.c"
 #include "alphabet.c"
 
 // server

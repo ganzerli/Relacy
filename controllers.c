@@ -14,7 +14,7 @@ struct HTTP_request{
 //                   // G E T    C O N T R O L L E R S 
 // '/favicon.ico'
 void ctrl_favicon(){
-    response_send_pic("favicon.ico");
+    response_send_pic("E-pachy_512x512.png");
 }
 // 'images'
 void ctrl_image(){
@@ -58,14 +58,12 @@ void ctrl_home(){
 //                      // P O S T    C O N T R O L L E R S
 // '/'
 void ctrl2(){
-        //response_send_pic("E-pachy_512x512.png");
         // forwarding to e-pathy
-        client_call( "127.0.0.1." , "8680" )
-        char bf[] = "<p>e-pathy responded wiht: hello, i am e-pathy</p>"
-
-        //  create tempfile for html
-        file_write(bf, "tempfile.html");
-        response_send_file("tempfile.html");
-        remove("tempfile.html")
+    char epathy_response[4096];
+    client_call( "127.0.0.1" , "8680", epathy_response );
+    //  create tempfile for html
+    file_write(epathy_response, "tempfile.html");
+    response_send_file("tempfile.html");
+    remove("tempfile.html");
 
 }

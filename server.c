@@ -7,9 +7,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
-#include <openssl/ssl.h>
-
-#include "backend_framework.c"
 
 void sigchld_handler(int s){
     // waitpid() might overwrite errno, so we save and restore it:
@@ -38,8 +35,7 @@ void null_addrinfo( struct addrinfo * s ){
     s->ai_next = NULL;                                                              // next node in linked list, type struct addrinfo*
 }
 
-
-int client_call( char* address , char* port ){
+int client_call( char* address , char* port , char* response_buffer ){
     const unsigned int MAXDATASIZE = 4096;
     int sockfd, numbytes;
     char buf[MAXDATASIZE];
@@ -79,12 +75,10 @@ int client_call( char* address , char* port ){
     inet_ntop(p->ai_family, get_in_addr( (struct sockaddr *)p->ai_addr ),s, sizeof s);
     freeaddrinfo(servinfo);   
 
-    printf("client: connecting to %s\n", s);
-
     // crete a message for the server
     str_cpy(buf , "hello from clinet");
     if (send(sockfd, buf, str_len(buf), 0) < 0){
-        tcperror("Send()");
+        perror("Send()");
         exit(5);
     }
 
@@ -94,14 +88,15 @@ int client_call( char* address , char* port ){
     }
 
     buf[numbytes] = '\0';
-    printf("client: received '%s'\n",buf);
     close(sockfd);
 
-    return 1;
+    str_cpy(response_buffer, buf);
+    return numbytes;
 }
 
 
 
+#include "backend_framework.c"
 // GET INFO FROM OPERATIVE SYSTEM AND WAIT FOR CONNECTIONS
 //                                                    queue = how many pending connections can wait before error network busy try later
 int relacy_listen( char* port , unsigned int queue ){ 
