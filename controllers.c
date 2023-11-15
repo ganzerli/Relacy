@@ -60,7 +60,28 @@ void ctrl_home(){
 void ctrl2(){
         // forwarding to e-pathy
     char epathy_response[4096];
-    client_call( "127.0.0.1" , "8680", epathy_response );
+    u32 epathy_request[4];
+
+    // [0] = INSTRUCTION
+    epathy_request[0] = 2;      // opcode for get paht
+    // [1] = WHERE 
+    epathy_request[1] = 0;      // path begin (indexed), 0 = ROOT
+    // [2] = WHAT   
+    epathy_request[2] = 0;      // no possibility implemented yet
+    epathy_request[3] = 0;      // no possibility implemented yet
+
+
+    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request, epathy_response );
+    
+    for(u32 i = 0; i < res_size; i++){
+         printf("\ne-pathy response: %0x , res size= %u", epathy_response[i] , res_size);
+    }
+
+
+
+    //snprintf( stdout , res_size , "\n%u", epathy_response[0]);
+
+
     //  create tempfile for html
     file_write(epathy_response, "tempfile.html");
     response_send_file("tempfile.html");

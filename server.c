@@ -35,10 +35,8 @@ void null_addrinfo( struct addrinfo * s ){
     s->ai_next = NULL;                                                              // next node in linked list, type struct addrinfo*
 }
 
-int client_call( char* address , char* port , char* response_buffer ){
-    const unsigned int MAXDATASIZE = 4096;
+int client_call( char* address , char* port , u32* request_buffer, u32* response_buffer ){
     int sockfd, numbytes;
-    char buf[MAXDATASIZE];
     struct addrinfo hints, *servinfo, *p;                                               // p is an alias to handle linked list
     int rv;
     char s[INET6_ADDRSTRLEN];
@@ -75,22 +73,21 @@ int client_call( char* address , char* port , char* response_buffer ){
     inet_ntop(p->ai_family, get_in_addr( (struct sockaddr *)p->ai_addr ),s, sizeof s);
     freeaddrinfo(servinfo);   
 
-    // crete a message for the server
-    str_cpy(buf , "hello from clinet");
-    if (send(sockfd, buf, str_len(buf), 0) < 0){
+    // send opcodes and operands to e-pathy
+    if (send( sockfd , request_buffer , 4 * sizeof(u32) , 0 ) < 0){
         perror("Send()");
         exit(5);
     }
 
-    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+    if ((numbytes = recv(sockfd, response_buffer, 4096, 0)) == -1) {
         perror("recv");
         exit(1);
     }
 
-    buf[numbytes] = '\0';
+    printf("res_b[0] = %0x" , response_buffer[0]);
+
     close(sockfd);
 
-    str_cpy(response_buffer, buf);
     return numbytes;
 }
 

@@ -1,8 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// ibraries
 typedef __uint8_t u8;
+// 4 bytes unsigned integer
+typedef u_int32_t  u32;  
+
+// libraries
 #include "file.c"
 #include "alphabet.c"
 
