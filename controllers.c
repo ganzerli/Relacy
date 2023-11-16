@@ -60,18 +60,27 @@ void ctrl_home(){
 void ctrl2(){
         // forwarding to e-pathy
     u32 epathy_response[4096];
-    u32 epathy_request[4];
+    u32 epathy_request[4+3];
 
     // [0] = INSTRUCTION
-    epathy_request[0] = 2;      // opcode for get paht
+    epathy_request[0] = 99;     // opcode
     // [1] = WHERE 
     epathy_request[1] = 0;      // path begin (indexed), 0 = ROOT
-    // [2] = WHAT   
-    epathy_request[2] = 0;      // no possibility implemented yet
-    epathy_request[3] = 0;      // no possibility implemented yet
+    // [2] = count   
+    epathy_request[2] = 3;      // count
+    epathy_request[3] = 0;      // options
+
+    //[4+] DATA
+    epathy_request[4] = 0x10000001;
+    epathy_request[5] = 0x11E77011;
+    epathy_request[6] = 0x10000001;
 
 
-    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request, epathy_response );
+
+
+
+
+    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , 7 , epathy_response );
     res_size /= sizeof (u32);
     
     for(u32 i = 0; i < res_size; i++){

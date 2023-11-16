@@ -35,7 +35,7 @@ void null_addrinfo( struct addrinfo * s ){
     s->ai_next = NULL;                                                              // next node in linked list, type struct addrinfo*
 }
 
-int client_call( char* address , char* port , u32* request_buffer, u32* response_buffer ){
+int client_call( char* address , char* port , u32* request_buffer, u32 count, u32* response_buffer ){
     int sockfd, numbytes;
     struct addrinfo hints, *servinfo, *p;                                               // p is an alias to handle linked list
     int rv;
@@ -74,7 +74,7 @@ int client_call( char* address , char* port , u32* request_buffer, u32* response
     freeaddrinfo(servinfo);   
 
     // send opcodes and operands to e-pathy
-    if (send( sockfd , request_buffer , 4 * sizeof(u32) , 0 ) < 0){
+    if (send( sockfd , request_buffer , count * sizeof(u32) , 0 ) < 0){
         perror("Send()");
         exit(5);
     }
