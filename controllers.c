@@ -59,7 +59,7 @@ void ctrl_home(){
 // '/'
 void ctrl2(){
         // forwarding to e-pathy
-    char epathy_response[4096];
+    u32 epathy_response[4096];
     u32 epathy_request[4];
 
     // [0] = INSTRUCTION
@@ -72,15 +72,13 @@ void ctrl2(){
 
 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request, epathy_response );
+    res_size /= sizeof (u32);
     
     for(u32 i = 0; i < res_size; i++){
          printf("\ne-pathy response: %0x , res size= %u", epathy_response[i] , res_size);
     }
 
-
-
     //snprintf( stdout , res_size , "\n%u", epathy_response[0]);
-
 
     //  create tempfile for html
     file_write(epathy_response, "tempfile.html");
