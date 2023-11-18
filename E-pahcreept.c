@@ -204,6 +204,23 @@ unsigned int split_n_keep(char** substrings, char* text){
     return i+1;
 }
 
+void epahcreept_makefile(const char* fileout , const char* filein){
+    // load html file with e-pahcreep syntax in it
+    char bf[4096]; 
+    file_load(bf,filein);
+    // splitting html text form epahcreept variables
+    char** substrings = malloc( sizeof (char*) * 126);
+    unsigned int strgs_count = split_n_keep( substrings , bf );
+    // translate the variables to values and concat all in buffer
+    var_to_values(bf,substrings , strgs_count);
+    //  create tempfile for html
+    file_write(bf, fileout);
+    free(substrings);
+}
+
+
+
+
 //    J S O N    J S O N    J S O N    J S O N       J  J    S S S S    O O O O    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    J S O N    J S O N          J    S          0     0    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    J S O N    J S O N          J    S S S S    O     O    N N   N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    

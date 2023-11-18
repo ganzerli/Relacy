@@ -27,17 +27,9 @@ void ctrl_home(){
     epahcreept_reset();
     add_var("<-12345->"  , "<p>this is a paragraph , and as all paragraps theres a lot of text here..</p>");
 
-    // load html file with e-pahcreep syntax in it
-    char bf[1024]; 
-    file_load(bf,"views/html.html");
-    // splitting html text form epahcreept variables
-    char** substrings = malloc( sizeof (char*) * 126);
-    unsigned int strgs_count = split_n_keep( substrings , bf );
-    // translate the variables to values and concat all in buffer
-    var_to_values(bf,substrings , strgs_count);
-    //  create tempfile for html
-    file_write(bf, "tempfile.html");
-    free(substrings);
+    const char filein[] = "views/html.html";
+    const char fileout[] = "tempfile.html";
+    epahcreept_makefile(fileout , filein);
 
     // char* dt = "{\"data\": [{\"type\": \"articles\",\"id\": \"1\",\"attributes\": {\"title\": \"JSON:API paints my bikeshed!\",\"body\": \"The shortest article. Ever.\"},\"relationships\": {\"author\": {\"data\": {\"id\": \"42\", \"type\": \"people\"}}}}],\"included\": [{\"type\": \"people\",\"id\": \"42\",\"attributes\": {\"name\": \"John\"}},{\"type\": \"people\",\"id\": \"24\",\"attributes\": {\"name\": \"Doe\"}}]}";
     // char result_buffer[1024] , data[1024]
@@ -50,8 +42,8 @@ void ctrl_home(){
 
     // just remembering how it was without epahcreept...
     add_response_header("Server: E-pache 1.0");
-    response_send_file("tempfile.html");
-    remove("tempfile.html");
+    response_send_file(fileout);
+    remove(fileout);
     epahcreept_reset();
 }
 
@@ -74,11 +66,6 @@ void ctrl2(){
     epathy_request[4] = 0x10000001;
     epathy_request[5] = 0x11E77011;
     epathy_request[6] = 0x10000001;
-
-
-
-
-
 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , 7 , epathy_response );
     res_size /= sizeof (u32);
