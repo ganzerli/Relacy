@@ -214,7 +214,7 @@ void epahcreept_makefile(const char* fileout , const char* filein){
     // translate the variables to values and concat all in buffer
     var_to_values(bf,substrings , strgs_count);
     //  create tempfile for html
-    file_write(bf, fileout);
+    file_write( fileout , bf );
     free(substrings);
 }
 

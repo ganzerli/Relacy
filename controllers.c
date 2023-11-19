@@ -47,8 +47,24 @@ void ctrl_home(){
     epahcreept_reset();
 }
 
-//                      // P O S T    C O N T R O L L E R S
-// '/'
+
+
+//                      P O S T    C O N T R O L L E R S
+
+
+
+//                   P P P        O O        S S S      T T T T T                                        
+//                   P    P     O     O     S               T                                   
+//                   P P P      O     O      S S S          T                                       
+//                   P          O     O           S         T
+//                   P            0 0       S S S           T                                                                                                             
+
+
+
+//        '/'
+//       '/'
+//      '/'
+
 void ctrl2(){
         // forwarding to e-pathy
     u32 epathy_response[4096];
@@ -77,7 +93,7 @@ void ctrl2(){
     //snprintf( stdout , res_size , "\n%u", epathy_response[0]);
 
     //  create tempfile for html
-    file_write(epathy_response, "tempfile.html");
+    file_write("tempfile.html", epathy_response);
     response_send_file("tempfile.html");
     remove("tempfile.html");
 

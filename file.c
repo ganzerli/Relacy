@@ -4,13 +4,35 @@
 void relacy_check(){
     FILE *fp;
 
-    fp=fopen(INDEXYX,"ab");                                            
+    fp=fopen(INDEXYX,"ab");          
+    fseek(fp, 0, SEEK_END);                                                 // moving pointer to end file
+    u32 bytes_count = ftell(fp);                                                   
     fclose(fp);
-    printf("file for indexes ready\n");
+    u32 *np;
+    // if nothing in file init with parallelized format
+    if(bytes_count  == 0){                                                  
+        fp=fopen(INDEXYX,"ab");   
+        // write COUNT as 1 = only 1 word in file
+        *np = 1;
+        fwrite(np, sizeof (u32), 1, fp);
+        // write first index as 0 , word "relacy" begins at index 0 of wordsdump
+        *np = 0;
+        fwrite(np, sizeof (u32), 1, fp);
+        // next word expected at index 6 -> 0 to 6 is word relacy
+        *np = 6;
+        fwrite(np, sizeof (u32), 1, fp);
 
-    fp= fopen(WORDSDUMP, "a");
-    fclose(fp);
-    printf("text file for wordks ready\n");
+        fclose(fp);
+        printf("file for indexes ready\n");
+
+        // create a file
+        fp = fopen(WORDSDUMP , "w");
+        // init with word relacy
+        fprintf(fp, "relacy");
+        fclose(fp);
+
+        printf("text file for wordks ready\n");
+    }                                  
 }
 
 unsigned int file_load(char *buffer , char* filename){
@@ -28,13 +50,19 @@ unsigned int file_load(char *buffer , char* filename){
     return count;
 }
 
-void file_write(char *text , char* filename){
+void file_write(char *filename , char* text){
     // creating file pointer to work with files
     FILE *fptr = fopen(filename, "w"); 
     // exiting program 
     if (fptr == NULL) printf("Error opening %s" , filename);
     fprintf(fptr, "%s", text);
     fclose(fptr);
+}
+
+void file_write_bin(char*filename , unsigned int size, void* buffer ){
+    FILE *fp = fopen(filename, "w");
+    fwrite(buffer, size, 1, fp);
+    fclose(fp);
 }
 
 
