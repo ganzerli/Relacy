@@ -12,6 +12,7 @@ typedef u_int32_t u32;
 // server
 #include "server.c"
 
+// now a word is a 32bits unsignet integer, that is what likes e-pathy
 u32 word_index(char* word){
     u32 newwordlen = str_len(word);
     // place for files content
@@ -25,44 +26,44 @@ u32 word_index(char* word){
     u32 count = idbf[0];                                            // idbf[0] = count
     u32 index;
     // idbf[0] = count , first index is in 1, next index in 2, next , next ...
-    for(u32 i = 1; i <= count+1; i++){
+    for(u32 i = 1; i <= count; i++){
         index = idbf[i];
         if(str_cmp(newwordlen, word, &wordsbf[index])){             // word existing
             return index;
         }
     }
-
     // WORD IS NOT INDEXED
     // id-file / id-buffer example
     // assuming COUNT is [1] , count is always at idbf[0]
     // idbf[0]  idbf[1]          idbf[2]          ..
     // [COUNT]  [first word id]  [id for next word] ..
+    // in this case next word index needs to be at[2]
 
-    // next word index needs to be at[2]
-
-    // index file has at count + 1 the next index
+    // idbf[count] = index of begin last word in wordsdump.txt
     u32 id_for_new_word = idbf[count+1];
     // concat new word
     str_cpy(&wordsbf[id_for_new_word] , word);
-
     // update count
-    count++;
-    idbf[0] = count;
-
-    // now in idbf[count] is the last inserted word..
-    // set place for next word
-    idbf[count+1] = idbf[count] + newwordlen;
-
+    idbf[0] = count+1;
+    // keep position for the next word getting indexed
+    idbf[count+2] = idbf[count+1] + newwordlen;
 
     // print
-    printf("\ncount = %u" , count);
-    for(u32 i = 0; i <= count+1; i++){
-        printf("\n%u" , idbf[i]);
-    } 
-    printf("\n%s" ,wordsbf);
+    // for(u32 i = 0; i <= count+2; i++){
+    //     printf("\nidbf[%u] = %u" , i , idbf[i]);
+    // } 
+    // printf("\n%s" ,wordsbf);
+
+    // idbf[0] = count
+    // idbf[count] = begin index of last word already present in the loaded file
+    // idbf[count+1] = begin index of the new word just indexed
+    // idbf[count+2] = index of just indexed word + his lingth -> index for the next
+    // count + 3 = total number of 32bits int in the buffer
+    const unsigned int filesize = (count+3) * sizeof(u32);
+    file_write_bin( INDEXYX , filesize , idbf );
+    file_write(WORDSDUMP,wordsbf);
 
     return id_for_new_word;
-
 }
 
 
@@ -86,12 +87,14 @@ void main(){
     // check existence of files
     relacy_check();
 
-    word_index("scroto");
+    u32 index = word_index("abc");
+    printf("%u", index);
 
-    char* port = "8086";
-    unsigned int queue = 10;
+    // server directives
+    const char* PORT = "8086";
+    const unsigned int queue = 1;
     // serving using E-pachy.jerryfish
-    printf("server connecting..\n");
-    relacy_listen( port , queue );
+    printf("\nserver connecting..\n");
+    relacy_listen( PORT , queue );
 
 }

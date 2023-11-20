@@ -60,7 +60,7 @@ void file_write(char *filename , char* text){
 }
 
 void file_write_bin(char*filename , unsigned int size, void* buffer ){
-    FILE *fp = fopen(filename, "w");
+    FILE *fp = fopen(filename, "wb");
     fwrite(buffer, size, 1, fp);
     fclose(fp);
 }
