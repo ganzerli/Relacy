@@ -17,10 +17,12 @@ void get(){
         route( "/favicon.ico" , ctrl_favicon );
         // image name will be in a parameter,now is for simplicity but many webistes and also Angular do so, and angular is from google.
         route( "/images", ctrl_image );
+        
 }
 
 void post(){
         route("/" , ctrl2 );
+        route("/display", display);
 }
 
 unsigned int backend_framework(char* buffer , unsigned int size){

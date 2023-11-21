@@ -5,7 +5,7 @@ struct HTTP_request{
     char* params;
     char* HTTP_version;
     unsigned int headers_count;
-    char** headers;
+    char* headers;
     unsigned int attributes_count;
     char* body;
 }http_request;
@@ -14,7 +14,7 @@ void manage_request(char *buffer , unsigned int size ){
     buffer[size] = '\0';
     char** request = str_split( "\n" , buffer );                                // str_split allocates the memory!!
     char* first_line = request[0];                                              // separate first line of request from rest
-    char** headers = &request[1];                                               // keep only headers
+    char* headers = &request[1];                                               // keep only headers
     unsigned int headers_count = get_strgs_counter()-1;                         // remember count of the headers -> str_split sets counter
     char** first_line_ = str_split(" " , first_line);                           // split first line
     http_request.method  = first_line_[0];

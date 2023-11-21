@@ -65,29 +65,36 @@ void ctrl_home(){
 //       '/'
 //      '/'
 
+#define ADD_NODE 0
+#define ROOT 1
+#define NO_OPTIONS 0
+
 void ctrl2(){
         // forwarding to e-pathy
     u32 epathy_response[4096];
-    u32 epathy_request[4+3];
-
+    u32 epathy_request[5+3];
+    const unsigned int HEADER_SIZE = 5;
     // [0] = INSTRUCTION
-    epathy_request[0] = 99;     // opcode
-    // [1] = WHERE 
-    epathy_request[1] = 0;      // path begin (indexed), 0 = ROOT
-    // [2] = count   
-    epathy_request[2] = 3;      // count
-    epathy_request[3] = 0;      // options
+    epathy_request[0] = ADD_NODE;               // opcode
+    // [1] = WHERE COUNT
+    epathy_request[1] = ROOT;                   // COUNT OF NODES TO PATH
+    // [2] = WHAT COUNT
+    epathy_request[2] = 1;                      // COUNT OF DATA TO ADD
+    // [3] = OPTIONS
+    epathy_request[3] = NO_OPTIONS;             // IF OPTIONS NEEDED
+    // [4] = SIZE
+    epathy_request[4] = HEADER_SIZE + epathy_request[1] + epathy_request[2];// SIZE OF PACKAGE    
 
-    //[4+] DATA
-    epathy_request[4] = 0x10000001;
-    epathy_request[5] = 0x11E77011;
-    epathy_request[6] = 0x10000001;
+    //[5+] DATA
+    epathy_request[5] = 0x00000000;
+    epathy_request[6] = 0x0000E770;
+ 
 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , 7 , epathy_response );
     res_size /= sizeof (u32);
     
     for(u32 i = 0; i < res_size; i++){
-         printf("\ne-pathy response: %0x , res size= %u", epathy_response[i] , res_size);
+        printf("\ne-pathy response: %0x , res size= %u", epathy_response[i] , res_size);
     }
 
     //snprintf( stdout , res_size , "\n%u", epathy_response[0]);
@@ -96,5 +103,23 @@ void ctrl2(){
     file_write("tempfile.html", epathy_response);
     response_send_file("tempfile.html");
     remove("tempfile.html");
+
+}
+
+
+
+void display(){
+
+    // EPAHCREEPT
+    epahcreept_reset();
+    add_var("<-12345->"  , "<p>node should be like that</p>");
+
+    const char filein[] = "views/html.html";
+    const char fileout[] = "tempfile.html";
+    epahcreept_makefile(fileout , filein);
+
+    response_send_file(fileout);
+    remove(fileout);
+    epahcreept_reset();
 
 }

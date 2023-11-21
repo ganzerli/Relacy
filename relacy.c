@@ -12,7 +12,7 @@ typedef u_int32_t u32;
 // server
 #include "server.c"
 
-// now a word is a 32bits unsignet integer, that is what likes e-pathy
+// now a word is a 32bits int, that is what e-pathy likes
 u32 word_index(char* word){
     u32 newwordlen = str_len(word);
     // place for files content
