@@ -25,7 +25,7 @@ void ctrl_image(){
 void ctrl_home(){
     // EPAHCREEPT
     epahcreept_reset();
-    add_var("<-12345->"  , "<p>this is a paragraph , and as all paragraps theres a lot of text here..</p>");
+    add_var("<-12345->" , "<p>this is a paragraph , and as all paragraps theres a lot of text here..</p>");
 
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
@@ -47,8 +47,6 @@ void ctrl_home(){
     epahcreept_reset();
 }
 
-
-
 //                      P O S T    C O N T R O L L E R S
 
 
@@ -66,16 +64,19 @@ void ctrl_home(){
 //      '/'
 
 #define ADD_NODE 0
+#define GET_PATH 2 
 #define ROOT 1
 #define NO_OPTIONS 0
 
 void ctrl2(){
         // forwarding to e-pathy
-    u32 epathy_response[4096];
-    u32 epathy_request[5+3];
+    u32 epathy_response_buffer[4096];
+    
     const unsigned int HEADER_SIZE = 5;
+    u32 epathy_request[HEADER_SIZE + 2];
+
     // [0] = INSTRUCTION
-    epathy_request[0] = ADD_NODE;               // opcode
+    epathy_request[0] = GET_PATH;               // opcode
     // [1] = WHERE COUNT
     epathy_request[1] = ROOT;                   // COUNT OF NODES TO PATH
     // [2] = WHAT COUNT
@@ -86,26 +87,26 @@ void ctrl2(){
     epathy_request[4] = HEADER_SIZE + epathy_request[1] + epathy_request[2];// SIZE OF PACKAGE    
 
     //[5+] DATA
-    epathy_request[5] = 0x00000000;
+    epathy_request[5] = 0x00000000;             // WHEN ROOT 0
     epathy_request[6] = 0x0000E770;
  
 
-    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , 7 , epathy_response );
+    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , epathy_request[4] , epathy_response_buffer );
     res_size /= sizeof (u32);
-    
+
+    printf("\nres_size =%u", res_size);
     for(u32 i = 0; i < res_size; i++){
-        printf("\ne-pathy response: %0x , res size= %u", epathy_response[i] , res_size);
+        printf("\ne-pathy response: %0x", epathy_response_buffer[i]);
     }
 
-    //snprintf( stdout , res_size , "\n%u", epathy_response[0]);
+    //snprintf( stdout , res_size , "\n%u", epathy_response_buffer[0]);
 
     //  create tempfile for html
-    file_write("tempfile.html", epathy_response);
+    file_write("tempfile.html", epathy_response_buffer);
     response_send_file("tempfile.html");
     remove("tempfile.html");
 
 }
-
 
 
 void display(){

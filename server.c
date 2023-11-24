@@ -84,8 +84,6 @@ int client_call( char* address , char* port , u32* request_buffer, u32 count, u3
         exit(1);
     }
 
-    printf("res_b[0] = %0x" , response_buffer[0]);
-
     close(sockfd);
 
     return numbytes;
