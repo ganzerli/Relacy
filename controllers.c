@@ -47,8 +47,8 @@ void ctrl_home(){
     epahcreept_reset();
 }
 
-//                      P O S T    C O N T R O L L E R S
 
+//                      P O S T    C O N T R O L L E R S
 
 
 //                   P P P        O O        S S S      T T T T T                                        
@@ -76,7 +76,7 @@ void ctrl2(){
     u32 epathy_request[HEADER_SIZE + 2];
 
     // [0] = INSTRUCTION
-    epathy_request[0] = GET_PATH;               // opcode
+    epathy_request[0] = 1;               // opcode
     // [1] = WHERE COUNT
     epathy_request[1] = ROOT;                   // COUNT OF NODES TO PATH
     // [2] = WHAT COUNT
@@ -88,7 +88,7 @@ void ctrl2(){
 
     //[5+] DATA
     epathy_request[5] = 0x00000000;             // WHEN ROOT 0
-    epathy_request[6] = 0x0000E770;
+    epathy_request[6] = 0x00004321;
  
 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , epathy_request[4] , epathy_response_buffer );
