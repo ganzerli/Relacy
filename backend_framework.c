@@ -21,8 +21,9 @@ void get(){
 }
 
 void post(){
-        route("/" , ctrl2 );
+        route("/" , dev );
         route("/display", display);
+        route("/add", add);
 }
 
 unsigned int backend_framework(char* buffer , unsigned int size){
@@ -47,10 +48,16 @@ void route(char* route , void(*controller)() ){
         }
 
 }
+void _404(){
+        str_cpy(http_response.status_code , "404 Not Found");
+        response_send_file("views/404.html");
+}
+
 void router(){
         found = 0;
         char* method = http_request.method;
         if( str_cmp(3 , "GET" ,method) ) get();
         if( str_cmp(4 , "POST" ,method) ) post();
         // all the others are the same
+        if(found == 0) _404();
 };

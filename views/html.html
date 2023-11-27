@@ -9,22 +9,18 @@
     <h1>Super cool html</h1>
     <img src="/images?E-pachy_512x512.png" alt="logo" style="position: absolute;top: 2rem;right: 2rem;width: 200px;">
     
-    <form action="/addnode" method="post">
-        <input type="text" name="add" placeholder="adding node to which path" required>
+    <form action="/add" method="post">
+        <input type="text" name="path" placeholder="add/node/to" required>
+        <input type="text" name="nodename" placeholder="nodename" required>
         <input type="submit" value="ADD NODE">
     </form>
 
-    <form action="/addtonode" method="post">
-        <input type="text" name="addtonode" placeholder="add elements to node" required>
-        <input type="submit" value="ADD TO NODE">
-    </form>
-
     <form action="/display" method="post">
-        <input type="text" name="display" placeholder="path to display" required>
-        <input type="submit" value="DISPLAY PATH">
+        <input type="text" name="display" placeholder="path/to/display" required>
+        <input type="submit" value="GET PATH CONTENT">
     </form>
 
-    <form action="/" method="post">
+    <form action="/dev" method="post">
         <input type="text" name="display" placeholder="DEV" required>
         <input type="submit" value="DEVELOPMENT">
     </form>

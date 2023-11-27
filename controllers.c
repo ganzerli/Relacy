@@ -68,7 +68,7 @@ void ctrl_home(){
 #define ROOT 1
 #define NO_OPTIONS 0
 
-void ctrl2(){
+void dev(){
         // forwarding to e-pathy
     u32 epathy_response_buffer[4096];
     
@@ -76,7 +76,7 @@ void ctrl2(){
     u32 epathy_request[HEADER_SIZE + 2];
 
     // [0] = INSTRUCTION
-    epathy_request[0] = 1;               // opcode
+    epathy_request[0] = 3;                      // opcode
     // [1] = WHERE COUNT
     epathy_request[1] = ROOT;                   // COUNT OF NODES TO PATH
     // [2] = WHAT COUNT
@@ -88,7 +88,7 @@ void ctrl2(){
 
     //[5+] DATA
     epathy_request[5] = 0x00000000;             // WHEN ROOT 0
-    epathy_request[6] = 0x00004321;
+    epathy_request[6] = 0x00003214;
  
 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , epathy_request[4] , epathy_response_buffer );
@@ -114,6 +114,26 @@ void display(){
     // EPAHCREEPT
     epahcreept_reset();
     add_var("<-12345->"  , "<p>node should be like that</p>");
+
+    const char filein[] = "views/html.html";
+    const char fileout[] = "tempfile.html";
+    epahcreept_makefile(fileout , filein);
+
+    response_send_file(fileout);
+    remove(fileout);
+    epahcreept_reset();
+
+}
+
+void add(){
+
+        // EPAHCREEPT
+    epahcreept_reset();
+    add_var("<-12345->"  , "<p>ADD: option not available yet..</p>");
+
+    char* body = http_request.body;
+    
+    
 
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
