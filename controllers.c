@@ -64,7 +64,7 @@ void ctrl_home(){
 //      '/'
 
 #define ADD_NODE 0
-#define GET_PATH 2 
+#define DIAPLAY_PATH 3
 #define ROOT 1
 #define NO_OPTIONS 0
 
@@ -76,7 +76,7 @@ void dev(){
     u32 epathy_request[HEADER_SIZE + 2];
 
     // [0] = INSTRUCTION
-    epathy_request[0] = 3;                      // opcode
+    epathy_request[0] = DIAPLAY_PATH;                      // opcode
     // [1] = WHERE COUNT
     epathy_request[1] = ROOT;                   // COUNT OF NODES TO PATH
     // [2] = WHAT COUNT
@@ -88,7 +88,7 @@ void dev(){
 
     //[5+] DATA
     epathy_request[5] = 0x00000000;             // WHEN ROOT 0
-    epathy_request[6] = 0x00003214;
+    epathy_request[6] = 0x00002222;
  
 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , epathy_request[4] , epathy_response_buffer );

@@ -21,7 +21,7 @@ void get(){
 }
 
 void post(){
-        route("/" , dev );
+        route("/dev" , dev );
         route("/display", display);
         route("/add", add);
 }
