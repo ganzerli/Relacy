@@ -63,7 +63,7 @@ void ctrl_home(){
 //       '/'
 //      '/'
 
-#define ADD_NODE 0
+#define ADD_NODE 1
 #define DIAPLAY_PATH 3
 #define ROOT 1
 #define NO_OPTIONS 0
@@ -73,22 +73,26 @@ void dev(){
     u32 epathy_response_buffer[4096];
     
     const unsigned int HEADER_SIZE = 5;
-    u32 epathy_request[HEADER_SIZE + 2];
+    u32 epathy_request[ HEADER_SIZE + 2 + 0 ];
 
     // [0] = INSTRUCTION
-    epathy_request[0] = DIAPLAY_PATH;                      // opcode
+    epathy_request[0] = DIAPLAY_PATH;        // opcode
     // [1] = WHERE COUNT
-    epathy_request[1] = ROOT;                   // COUNT OF NODES TO PATH
+    epathy_request[1] = 2;                   // COUNT OF NODES TO PATH
     // [2] = WHAT COUNT
-    epathy_request[2] = 1;                      // COUNT OF DATA TO ADD
+    epathy_request[2] = 1;                   // COUNT OF DATA TO ADD
     // [3] = OPTIONS
-    epathy_request[3] = NO_OPTIONS;             // IF OPTIONS NEEDED
+    epathy_request[3] = NO_OPTIONS;          // IF OPTIONS NEEDED
     // [4] = SIZE
     epathy_request[4] = HEADER_SIZE + epathy_request[1] + epathy_request[2];// SIZE OF PACKAGE    
 
-    //[5+] DATA
-    epathy_request[5] = 0x00000000;             // WHEN ROOT 0
-    epathy_request[6] = 0x00002222;
+    //[5+] DATA WHERE
+    //epathy_request[5] = 0x00000000;             // WHEN ROOT 0
+    epathy_request[5] = 0x00002222;
+    epathy_request[6] = 0x00002223;
+
+    // DATA WHAT
+    //epathy_request[6] = 0x00002223;
  
 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , epathy_request[4] , epathy_response_buffer );
