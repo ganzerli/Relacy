@@ -63,48 +63,24 @@ void ctrl_home(){
 //       '/'
 //      '/'
 
-#define ADD_NODE 1
-#define DIAPLAY_PATH 3
-#define ROOT 1
-#define NO_OPTIONS 0
 
 void dev(){
         // forwarding to e-pathy
     u32 epathy_response_buffer[4096];
-    
-    const unsigned int HEADER_SIZE = 5;
-    u32 epathy_request[ HEADER_SIZE + 2 + 0 ];
 
-    // [0] = INSTRUCTION
-    epathy_request[0] = DIAPLAY_PATH;        // opcode
-    // [1] = WHERE COUNT
-    epathy_request[1] = 2;                   // COUNT OF NODES TO PATH
-    // [2] = WHAT COUNT
-    epathy_request[2] = 1;                   // COUNT OF DATA TO ADD
-    // [3] = OPTIONS
-    epathy_request[3] = NO_OPTIONS;          // IF OPTIONS NEEDED
-    // [4] = SIZE
-    epathy_request[4] = HEADER_SIZE + epathy_request[1] + epathy_request[2];// SIZE OF PACKAGE    
+    u32* ept_req_bf;
+    u32 data_where[2] = { 0x00002222 , 0x00002223 };
+    u32 *data_what;
 
-    //[5+] DATA WHERE
-    //epathy_request[5] = 0x00000000;             // WHEN ROOT 0
-    epathy_request[5] = 0x00002222;
-    epathy_request[6] = 0x00002223;
-
-    // DATA WHAT
-    //epathy_request[6] = 0x00002223;
- 
-
-    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , epathy_request[4] , epathy_response_buffer );
+    u32 req_size = epathy_request(ept_req_bf , DISPLAY_PATH, data_where, 2, data_what , 0 );
+    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , req_size , epathy_response_buffer );
     res_size /= sizeof (u32);
 
     printf("\nres_size =%u", res_size);
     for(u32 i = 0; i < res_size; i++){
         printf("\ne-pathy response: %0x", epathy_response_buffer[i]);
     }
-
     //snprintf( stdout , res_size , "\n%u", epathy_response_buffer[0]);
-
     //  create tempfile for html
     file_write("tempfile.html", epathy_response_buffer);
     response_send_file("tempfile.html");
@@ -114,7 +90,6 @@ void dev(){
 
 
 void display(){
-
     // EPAHCREEPT
     epahcreept_reset();
     add_var("<-12345->"  , "<p>node should be like that</p>");
@@ -130,8 +105,7 @@ void display(){
 }
 
 void add(){
-
-        // EPAHCREEPT
+    // EPAHCREEPT
     epahcreept_reset();
     add_var("<-12345->"  , "<p>ADD: option not available yet..</p>");
 

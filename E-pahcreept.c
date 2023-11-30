@@ -454,3 +454,58 @@ char* JSON_get_array(char* resultbf, char* data, unsigned int search){
 //    J S O N    J S O N      /        J S O N          J        S S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    /          J S O N        J            S    0     0    N   N N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    
 //    J S O N    J S O N    /          J S O N    J J        S S S S    0 0 0 0    N     N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N    J S O N  
+
+
+
+
+//          EEEEEEE                 PPPPPP          A      TTTTTTTTTTT      H       H       Y       Y
+//          E                       P     P        AAA          T           H       H        Y     Y
+//          EEEEE       #######     P     P       A   A         T           H       H         YY YY
+//          E                       PPPPPP       AAAAAAA        T           HHHHHHHHH           Y
+//          E                       P           A       A       T           H       H           Y
+//          EEEEEEEE                P          A         A      T           H       H           Y
+
+
+
+#define DISPLAY_ROOT 0
+#define ADD_NODE 1
+#define ADD_TO_EXISTING_PATH 2
+#define DIAPLAY_PATH 3
+#define DELETE 4
+#define ROOT 0
+
+
+u32 epathy_request(u32 *epathy_request_bf, u32 command, u32* data_where, u32 dt_wr_count, u32*data_what, u32 dt_wt_count ){
+    u32 size = 0;
+    const unsigned int HEADER_SIZE = 5;
+    epathy_request_bf = (u32*) malloc( (HEADER_SIZE + dt_wr_count + dt_wt_count ) * sizeof(u32) );
+    if(epathy_request == NULL) return 0;
+    // [0] = INSTRUCTION
+    epathy_request_bf[0] = command;        // opcode
+    // [1] = WHERE COUNT
+    epathy_request_bf[1] = dt_wr_count;                   // COUNT OF NODES TO PATH
+    // [2] = WHAT COUNT
+    epathy_request_bf[2] = dt_wt_count;                   // COUNT OF DATA TO ADD
+    // [3] = OPTIONS
+    epathy_request_bf[3] = NO_OPTIONS;                    // IF OPTIONS NEEDED
+    // [4] = SIZE
+    epathy_request_bf[4] = HEADER_SIZE + dt_wr_count + dt_wt_count; // SIZE OF PACKAGE    
+    //[5+] DATA WHERE
+    for(u32 i = 5; i < dt_wr_count + 5; i++){
+        epathy_request_bf[i] = data_where[i-5];
+    }
+    for(u32 i = 5 + dt_wr_count; i < dt_wr_count + 5 + dt_wt_count; i++ ){
+        epathy_request_bf[i] = data_what[i-5-dt_wt_count];
+    }
+    return 5 + dt_wr_count + dt_wt_count;
+}
+
+
+
+           //     EEEEEEE                 PPPPPP          A      TTTTTTTTTTT      H       H       Y       Y
+          //      E                       P     P        AAA          T           H       H        Y     Y
+         //       EEEEE       #######     P     P       A   A         T           H       H         YY YY
+        //        E                       PPPPPP       AAAAAAA        T           HHHHHHHHH           Y
+       //         E                       P           A       A       T           H       H           Y
+      //          EEEEEEEE                P          A         A      T           H       H           Y
+
