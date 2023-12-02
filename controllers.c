@@ -68,17 +68,18 @@ void dev(){
         // forwarding to e-pathy
     u32 epathy_response_buffer[4096];
 
-    u32* ept_req_bf;
+    u32 ept_req_bf[HEADER_SIZE + 2 + 1 +1];
     u32 data_where[2] = { 0x00002222 , 0x00002223 };
-    u32 *data_what;
+    u32 data_what[1] = {0};
 
     u32 req_size = epathy_request(ept_req_bf , DISPLAY_PATH, data_where, 2, data_what , 0 );
-    unsigned int res_size = client_call( "127.0.0.1" , "8680", epathy_request , req_size , epathy_response_buffer );
+
+    for(u32 i = 0 ; i < req_size; i++){
+    }
+    unsigned int res_size = client_call( "127.0.0.1" , "8680", ept_req_bf , req_size , epathy_response_buffer );
     res_size /= sizeof (u32);
 
-    printf("\nres_size =%u", res_size);
     for(u32 i = 0; i < res_size; i++){
-        printf("\ne-pathy response: %0x", epathy_response_buffer[i]);
     }
     //snprintf( stdout , res_size , "\n%u", epathy_response_buffer[0]);
     //  create tempfile for html
@@ -87,7 +88,6 @@ void dev(){
     remove("tempfile.html");
 
 }
-
 
 void display(){
     // EPAHCREEPT
