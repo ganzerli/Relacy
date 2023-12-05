@@ -67,7 +67,6 @@ void ctrl_home(){
 void dev(){
         // forwarding to e-pathy
     u32 epathy_response_buffer[4096];
-
     u32 ept_req_bf[HEADER_SIZE + 2 + 1 +1];
     u32 data_where[2] = { 0x00002222 , 0x00002223 };
     u32 data_what[1] = {0};
@@ -91,9 +90,10 @@ void dev(){
 
 void display(){
     // EPAHCREEPT
-    epahcreept_reset();
-    add_var("<-12345->"  , "<p>node should be like that</p>");
 
+    epahcreept_reset();
+    add_var("<-12345->"  ,  http_request.body);
+    
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
     epahcreept_makefile(fileout , filein);
@@ -101,16 +101,89 @@ void display(){
     response_send_file(fileout);
     remove(fileout);
     epahcreept_reset();
+}
+
+
+u32 format_command(char* post_request){
+    u32 split_index = 0;
+    u32 i = 0;
+    u32 offset = 0;
+    char ch = post_request[0];
+    const char slash[] = "%2F";
+
+    while(ch != '\0'){
+
+        // slash
+        if(ch == '%'){
+            if(str_cmp(str_len(slash), slash , &post_request[i])){
+                ch = '/';
+                post_request[i-offset] = ch;
+                offset+= str_len(slash)-1;
+                i+= str_len(slash)-1;                              
+            }
+        }
+        if(ch == '&'){
+            post_request[i- offset] = '\0';
+            split_index = i-offset+1;
+        }else{
+            post_request[i-offset] = ch;
+        }
+
+        i++;
+        ch = post_request[i];
+
+    }
+
+    post_request[i-offset] = '\0';
+
+    printf("\n%s\n" , post_request);
+    printf("\n%s\n" , &post_request[split_index]);
+
+    return split_index;
 
 }
+
+
+u32 compile( char* stringToId , u32* buffer ){
+    u32 size = 0;
+    u32 i = 0;
+    while(stringToId[i] != '='){
+        i++;
+    }
+    printf("\n id of = %u" , i);
+    char** splitted = str_split("/", &stringToId[i+1]);
+
+    for(u32 i = 0; i < strgs_counter; i++){
+        printf("\n%s" , splitted[i]);
+        buffer[i] = word_index(splitted[i]);
+        size++;
+    }
+    return size;
+}
+
 
 void add(){
     // EPAHCREEPT
     epahcreept_reset();
-    add_var("<-12345->"  , "<p>ADD: option not available yet..</p>");
 
-    char* body = http_request.body;
+    char* command = http_request.body;
     
+    u32 new_node = format_command(command);
+    
+    u32 data_where[128];
+    u32 count = compile(command, data_where);
+    //format_command(body);
+    for(u32 i = 0; i < count; i++){
+        printf("\ndata_where[%u] = %u", i , data_where[i]);
+    }
+
+
+    
+    add_var("<-12345->"  , &command[new_node]);
+    
+
+
+
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
     epahcreept_makefile(fileout , filein);

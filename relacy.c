@@ -9,8 +9,7 @@ typedef u_int32_t u32;
 #include "file.c"
 #include "alphabet.c"
 
-// server
-#include "server.c"
+
 
 // now a word is a 32bits int, that is what e-pathy likes
 u32 word_index(char* word){
@@ -66,7 +65,23 @@ u32 word_index(char* word){
     return id_for_new_word;
 }
 
+u32 getWordAt(u32 idToSearch){
+    u32 length= 0;
+    // get indexes
+    u32 idbf[4096* sizeof(u32)];
+    char wordsbf[4096];
+    file_load(idbf , INDEXYX);
+    file_load(wordsbf , WORDSDUMP);
+    u32 count = idbf[0];
+    // look in indexes..
+    for(u32 i = 1; 0 < count; i++){
+        if( idbf[i] == idToSearch) return idbf[i+1] - idbf[i];
+    }
+    return length;
+}
 
+// server
+#include "server.c"
 
 //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  M A I N  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // //  // 
 void main(){
@@ -88,7 +103,14 @@ void main(){
     relacy_check();
 
     u32 index = word_index("abc");
-    printf("%u", index);
+    u32 index2 = word_index("hello");
+    printf("i-> %u", index);
+    printf("i2-> %u", index2);
+    u32 length = getWordAt(index);
+    printf("lenght word at: %u  -> %u" ,index , length );
+    u32 length2 = getWordAt(10);
+    printf("lenght word at: %u  -> %u" ,index2 , length2 );
+
 
     // server directives
     const char* PORT = "8086";

@@ -209,7 +209,7 @@ void epahcreept_makefile(const char* fileout , const char* filein){
     char bf[4096]; 
     file_load(bf,filein);
     // splitting html text form epahcreept variables
-    char** substrings = malloc( sizeof (char*) * 126);
+    char** substrings = malloc( sizeof (char*) * 128);
     unsigned int strgs_count = split_n_keep( substrings , bf );
     // translate the variables to values and concat all in buffer
     var_to_values(bf,substrings , strgs_count);
@@ -217,6 +217,7 @@ void epahcreept_makefile(const char* fileout , const char* filein){
     file_write( fileout , bf );
     free(substrings);
 }
+
 
 
 
