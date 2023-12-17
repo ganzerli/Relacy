@@ -150,11 +150,24 @@ u32 compile( char* stringToId , u32* buffer ){
     while(stringToId[i] != '='){
         i++;
     }
+
+    // if root pr  /
+    if (stringToId[i+1] =='/'){
+        printf("%s\n" , &stringToId[i+1]);
+        buffer[0]=0;
+        return 1;
+    }
+    if(str_cmp(4, &stringToId[i+1], "root")){
+        printf("%s\n" , &stringToId[i+1]);
+        buffer[0]=0;
+        return 1;
+    }
+
     printf("\n id of = %u" , i);
     char** splitted = str_split("/", &stringToId[i+1]);
 
     for(u32 i = 0; i < strgs_counter; i++){
-        printf("\n%s" , splitted[i]);
+        printf("\n%u" , splitted[i]);
         buffer[i] = word_index(splitted[i]);
         size++;
     }
@@ -170,20 +183,26 @@ void add(){
     
     u32 new_node = format_command(command);
     
-    u32 data_where[128];
+    u32 data_where[64];
+
     u32 count = compile(command, data_where);
     //format_command(body);
     for(u32 i = 0; i < count; i++){
         printf("\ndata_where[%u] = %u", i , data_where[i]);
+        printf("wordl: %d" , getWordAt(data_where[i]));
     }
 
+    u32 data_what[64];
+    count = compile(&command[new_node] , data_what);
 
+    for(u32 i = 0; i < count; i++){
+        printf("\ndata_what[%u] = %u", i , data_what[i]);
+        printf("wordl: %u" , getWordAt(data_what[i]));
+    }
+
+    add_var("<-12345->"  , command);
+    var_concat("<-12345->", &command[new_node]);
     
-    add_var("<-12345->"  , &command[new_node]);
-    
-
-
-
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
     epahcreept_makefile(fileout , filein);
