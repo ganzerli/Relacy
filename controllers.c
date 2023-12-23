@@ -120,8 +120,8 @@ u32 format_command(char* post_request){
 
     post_request[i-offset] = '\0';
 
-    printf("\n%s\n" , post_request);
-    printf("\n%s\n" , &post_request[split_index]);
+    printf("\n%s" , post_request);
+    printf("\n%s" , &post_request[split_index]);
 
     return split_index;
 
@@ -134,12 +134,26 @@ u32 compile( char* stringToId , u32* buffer ){
     while(stringToId[i] != '='){
         i++;
     }
-    printf("\n id of = %u" , i);
 
     char** splitted = str_split("/", &stringToId[i+1]);
 
+    printf("compiling: %s" , stringToId);
+    
+    // if 1st char is / return root
+    if(splitted[0][0] == '/'){
+        // bad format , or wanted ROOT  
+        buffer[0] = 0;
+        return 0;
+    }
+    // 
+
     for(u32 i = 0; i < strgs_counter; i++){
-        printf("\n%u" , splitted[i]);
+        printf( "\n%s - %u " , splitted[i] , str_len(splitted[i]) );
+        // if fomrmat is incorrect just mark as root
+        if( str_len(splitted[i]) == 0 ){
+            buffer[0] = 0;
+            return 0;
+        }
         buffer[i] = word_index(splitted[i]);
         size++;
     }
@@ -187,9 +201,13 @@ void display(){
         // EPAHCREEPT
     epahcreept_reset();
 
+
     char* command = http_request.body;
+    u32 new_node = format_command(command);
     
     u32 data_where[128];
+
+    printf("display path\n -> %s" , command);  
 
     u32 count = compile(command, data_where);
     //format_command(body);
@@ -198,7 +216,14 @@ void display(){
         printf("wordl: %u" , getWordAt(data_where[i]));
     }
 
-    add_var("<-12345->"  , data_where);
+    if(count == 0){
+        add_var("<-12345->"  , "ROOT");
+
+    }else{
+        add_var("<-12345->"  , command);
+
+    }
+
     
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";

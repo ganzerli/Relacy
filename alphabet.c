@@ -91,6 +91,8 @@ struct index* strpreprocess(char* splitter , char* str){
     // get first char 
     register char frc = splitter[0];    
     struct index iiddxx;
+    iiddxx.size = 0;
+    iiddxx.index = 0;
     // worst case scenario
     struct index *idx_s = malloc(sizeof iiddxx * (str_sz / 2) );
     // set o as first index
@@ -113,6 +115,16 @@ struct index* strpreprocess(char* splitter , char* str){
         }
         i++;
     }
+
+    // if splitter never found set as only one string found
+    if(iiddxx.size == 0 ){
+        iiddxx.size = str_len(str);
+        idx_s = realloc( idx_s , sizeof(iiddxx) );
+        idx_s[0] = iiddxx;
+        set_strgs_counter(1);
+        return idx_s;
+    }
+
     // collecting the last from last struct
     iiddxx.index = iiddxx.index + iiddxx.size + spl_sz;
     iiddxx.size = i - iiddxx.index ;
@@ -125,7 +137,7 @@ struct index* strpreprocess(char* splitter , char* str){
 }
 
 // # # # # # # # # # # # # # # # # # # # # # # # # # # #     K E E P   T R A C K   O F   S T R I N G S   I N   T H E   H E A P     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-void * strings_in_heap[4096];
+void * strings_in_heap[1024];
 unsigned int strings_in_heap_count = 0;
 
 void track_string( void *p ){
@@ -153,8 +165,8 @@ char ** str_split(char* splitter , char* str){
     // get substring from to following index structure
     char* new_string_from(char* str , unsigned int index , unsigned int size){
         char* newstr = malloc( (sizeof (char) * size) + 1 );
-        // keep count of strings on the heap
-        track_string(newstr);
+        newstr[0] = '\0';                           // if size is 0
+        track_string(newstr);                       // keep count of strings on the heap
         for (unsigned int i = 0; i < size; i++){
             newstr[i] = str[index + i];
         }
