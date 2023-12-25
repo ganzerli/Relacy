@@ -172,9 +172,11 @@ void add(){
 
     u32 count = compile(command, data_where);
     //format_command(body);
+
+    char word[64];
     for(u32 i = 0; i < count; i++){
         printf("\ndata_where[%u] = %u", i , data_where[i]);
-        printf("wordl: %u" , getWordAt(data_where[i]));
+        printf("wordl: %u" , getWordAt(word , data_where[i]));
     }
 
     u32 data_what[128];
@@ -182,7 +184,7 @@ void add(){
 
     for(u32 i = 0; i < count; i++){
         printf("\ndata_what[%u] = %u", i , data_what[i]);
-        printf("wordl: %u" , getWordAt(data_what[i]));
+        printf("wordl: %u" , getWordAt(word , data_what[i]));
     }
 
     add_var("<-12345->"  , data_what);
@@ -213,14 +215,30 @@ void display(){
     //format_command(body);
     for(u32 i = 0; i < count; i++){
         printf("\ndata_where[%u] = %u", i , data_where[i]);
-        printf("wordl: %u" , getWordAt(data_where[i]));
+        //printf("wordl: %u" , getWordAt(data_where[i]));
     }
+
+    char result[256];
+    char word[64];
 
     if(count == 0){
         add_var("<-12345->"  , "ROOT");
 
     }else{
-        add_var("<-12345->"  , command);
+        // times count
+
+        for(u32 i = 0; i < count; i++){
+             printf("\ndata_where[%u] = %u", i , data_where[i]);
+            // get the word
+            getWordAt(word , data_where[i]);
+            // estract from wordsdump
+            // concat in resultſ
+            str_cat(result , result , word);
+        }
+
+
+
+        add_var("<-12345->"  , result);
 
     }
 

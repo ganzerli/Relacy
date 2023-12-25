@@ -65,18 +65,31 @@ u32 word_index(char* word){
     return id_for_new_word;
 }
 
-u32 getWordAt(u32 idToSearch){
+u32 getWordAt( char* word_bf , u32 idToSearch){
     u32 length= 0;
     // get indexes
     u32 idbf[4096* sizeof(u32)];
     char wordsbf[4096];
-    file_load(idbf , INDEXYX);
+
+
+        printf("\n----- lakfsdjlsd ------");
+
+    file_load(idbf , INDEXYX);        
+    printf("\n----- lakfsdjlsd ------");
+
     file_load(wordsbf , WORDSDUMP);
     u32 count = idbf[0];
+
+        printf("\n----- lakfsdjlsd ------");
     // look in indexes..
     for(u32 i = 1; 0 < count; i++){
-        if( idbf[i] == idToSearch) return idbf[i+1] - idbf[i];
+        if( idbf[i] == idToSearch) length = idbf[i+1] - idbf[i];
     }
+    // filling a word
+    char word[64];
+    sub_str(word , word_bf , idToSearch , length);
+    printf("\n----- %s ------" , word);
+
     return length;
 }
 
@@ -106,10 +119,11 @@ void main(){
     u32 index2 = word_index("hello");
     printf("i-> %u", index);
     printf("i2-> %u", index2);
-    u32 length = getWordAt(index);
-    printf("lenght word at: %u  -> %u" ,index , length );
-    u32 length2 = getWordAt(10);
-    printf("lenght word at: %u  -> %u" ,index2 , length2 );
+    
+    //u32 length = getWordAt(index);
+    //printf("lenght word at: %u  -> %u" ,index , length );
+    //u32 length2 = getWordAt(10);
+    //printf("lenght word at: %u  -> %u" ,index2 , length2 );
 
 
     // server directives

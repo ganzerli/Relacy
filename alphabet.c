@@ -205,9 +205,10 @@ void str_cpy(char* result, char* str){
     result[count] = '\0';
 }
 
-void sub_str(char*bf_substr, char* bf_input , unsigned int first, unsigned int last ){
+void sub_str(char*bf_substr, char* bf_input , unsigned int first, unsigned int length ){
     unsigned int itr = 0;
-    for (unsigned int i = first; i <= last; i++){
+    for (unsigned int i = first; i < first+length; i++){
+        printf("%c" , bf_input[i]);
         bf_substr[itr] = bf_input[i];
         itr++;
     }
