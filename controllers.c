@@ -174,18 +174,18 @@ void add(){
     //format_command(body);
 
     char word[64];
-    for(u32 i = 0; i < count; i++){
-        printf("\ndata_where[%u] = %u", i , data_where[i]);
-        printf("wordl: %u" , getWordAt(word , data_where[i]));
-    }
+    // for(u32 i = 0; i < count; i++){
+    //     printf("\ndata_where[%u] = %u", i , data_where[i]);
+    //     printf("wordl: %u" , getWordAt(word , data_where[i]));
+    // }
 
     u32 data_what[128];
     count = compile(&command[new_node] , data_what);
 
-    for(u32 i = 0; i < count; i++){
-        printf("\ndata_what[%u] = %u", i , data_what[i]);
-        printf("wordl: %u" , getWordAt(word , data_what[i]));
-    }
+    // for(u32 i = 0; i < count; i++){
+    //     printf("\ndata_what[%u] = %u", i , data_what[i]);
+    //     printf("wordl: %u" , getWordAt(word , data_what[i]));
+    // }
 
     add_var("<-12345->"  , data_what);
     
@@ -200,54 +200,44 @@ void add(){
 }
 
 void display(){
-        // EPAHCREEPT
+    // EPAHCREEPT
     epahcreept_reset();
-
 
     char* command = http_request.body;
     u32 new_node = format_command(command);
     
     u32 data_where[128];
-
-    printf("display path\n -> %s" , command);  
-
     u32 count = compile(command, data_where);
-    //format_command(body);
-    for(u32 i = 0; i < count; i++){
-        printf("\ndata_where[%u] = %u", i , data_where[i]);
-        //printf("wordl: %u" , getWordAt(data_where[i]));
-    }
+
+    // for(u32 i = 0; i < count; i++){
+    //     printf("\ndata_where[%u] = %u", i , data_where[i]);
+    //     printf("wordl: %u" , getWordAt(data_where[i]));
+    // }
 
     char result[256];
+    result[0] = '\0';
+
     char word[64];
 
     if(count == 0){
         add_var("<-12345->"  , "ROOT");
-
     }else{
-        // times count
-
+        // collect the words from the file to display
         for(u32 i = 0; i < count; i++){
-             printf("\ndata_where[%u] = %u", i , data_where[i]);
             // get the word
             getWordAt(word , data_where[i]);
-            // estract from wordsdump
             // concat in resultſ
             str_cat(result , result , word);
         }
-
-
-
         add_var("<-12345->"  , result);
-
     }
-
     
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
-    epahcreept_makefile(fileout , filein);
 
+    epahcreept_makefile(fileout , filein);
     response_send_file(fileout);
+    // remove file and reset variables exiting the function
     remove(fileout);
     epahcreept_reset();
 }

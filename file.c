@@ -41,12 +41,9 @@ unsigned int file_load(char *buffer , char* filename){
     char c = fgetc(fp);
     unsigned int count = 0;
     while ( c != EOF){
-
-        ///////////  BUG 
+        //printf("%c" , c);
         buffer[count] = c;
         c = fgetc(fp);        
-        printf("%c" , c);
-
         count++;
     }
     buffer[count] = '\0';
