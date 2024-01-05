@@ -182,15 +182,41 @@ void add(){
     //     printf("wordl: %u" , getWordAt(word , data_where[i]));
     // }
 
+    char result[256]; result[0] = '\0';
+
+    str_cat(result, result, " Cerating in ");
+    // collect the words from the file to display
+        for(u32 i = 0; i < count; i++){
+            // get the word
+            getWordAt(word , data_where[i]);
+            // concat in resultſ
+            str_cat(result, result , " / ");
+            str_cat(result , result , word);
+        }
+
     u32 data_what[128];
     count = compile(&command[new_node] , data_what);
+
+    str_cat(result, result, " nodes: ");
+
+        for(u32 i = 0; i < count; i++){
+            // get the word
+            getWordAt(word , data_what[i]);
+            // concat in resultſ
+            str_cat(result , result , word);
+            str_cat(result, result , " ");
+        }
+
+
 
     // for(u32 i = 0; i < count; i++){
     //     printf("\ndata_what[%u] = %u", i , data_what[i]);
     //     printf("wordl: %u" , getWordAt(word , data_what[i]));
     // }
 
-    add_var("<-12345->"  , data_what);
+    //
+
+    add_var("<-12345->"  , result);
     
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
@@ -220,6 +246,8 @@ void display(){
     char result[256];
     result[0] = '\0';
 
+    str_cat(result, result, "Searching ");
+
     char word[64];
 
     if(count == 0){
@@ -231,6 +259,7 @@ void display(){
             getWordAt(word , data_where[i]);
             // concat in resultſ
             str_cat(result , result , word);
+            str_cat(result, result , " ");
         }
         add_var("<-12345->"  , result);
     }
