@@ -128,14 +128,18 @@ u32 format_command(char* post_request){
 }
 
 
-u32 compile( char* stringToId , u32* buffer ){
+u32 compile( char* stringToId , u32* buffer){
     u32 size = 0;
     u32 i = 0;
     while(stringToId[i] != '='){
         i++;
     }
 
-    char** splitted = str_split("/", &stringToId[i+1]);
+    char split[2] = " ";
+    if(indexOf(stringToId,'+') != 0) split[0] = '+';
+    if(indexOf(stringToId,'/') != 0) split[0] = '/';
+
+    char** splitted = str_split(split, &stringToId[i+1]);
 
     printf("compiling: %s" , stringToId);
     
@@ -145,7 +149,6 @@ u32 compile( char* stringToId , u32* buffer ){
         buffer[0] = 0;
         return 0;
     }
-    // 
 
     for(u32 i = 0; i < strgs_counter; i++){
         printf( "\n%s - %u " , splitted[i] , str_len(splitted[i]) );

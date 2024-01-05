@@ -213,3 +213,14 @@ void sub_str(char*bf_substr, char* bf_input , unsigned int first, unsigned int l
     }
     bf_substr[itr] = '\0';
 }
+
+int indexOf(char * input , char c){
+    int i = 0;
+    while(input[i] != '\0'){
+        if(input[i] == c){
+            return i;
+        }
+        i++;
+    }
+    return 0;
+}
