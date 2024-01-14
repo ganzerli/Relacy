@@ -172,21 +172,36 @@ void add(){
     u32 new_node = format_command(command);
     
     u32 data_where[128];
+    u32 countWr = compile(command, data_where);
 
-    u32 count = compile(command, data_where);
-    //format_command(body);
 
-    char word[64];
-    // for(u32 i = 0; i < count; i++){
-    //     printf("\ndata_where[%u] = %u", i , data_where[i]);
-    //     printf("wordl: %u" , getWordAt(word , data_where[i]));
-    // }
+    u32 data_what[128];
+    u32 countWt = compile(&command[new_node] , data_what);
+
+    // send request to e-pathy
+    u32 epathy_response_buffer[256];
+    u32 ept_req_bf[256];
+
+    // format a request buffer
+    u32 req_size = epathy_request(ept_req_bf , ADD_NODE, data_where, countWr, data_what , countWt );
+
+    // get response from e-pathy TCP 
+    unsigned int res_size = client_call( "127.0.0.1" , "8680", ept_req_bf , req_size , epathy_response_buffer );
+    res_size /= sizeof (u32);
+
+    printf("\n response from e-pathy\n");
+    for(u32 i = 0; i < res_size; i++){
+        printf(" %u) %u " , i , epathy_response_buffer[i]);
+    }
+
+
 
     char result[256]; result[0] = '\0';
+    char word[64];
 
     str_cat(result, result, " Cerating in ");
     // collect the words from the file to display
-        for(u32 i = 0; i < count; i++){
+        for(u32 i = 0; i < countWr; i++){
             // get the word
             getWordAt(word , data_where[i]);
             // concat in resultſ
@@ -194,12 +209,10 @@ void add(){
             str_cat(result , result , word);
         }
 
-    u32 data_what[128];
-    count = compile(&command[new_node] , data_what);
 
     str_cat(result, result, " nodes: ");
 
-        for(u32 i = 0; i < count; i++){
+        for(u32 i = 0; i < countWt; i++){
             // get the word
             getWordAt(word , data_what[i]);
             // concat in resultſ
@@ -207,14 +220,6 @@ void add(){
             str_cat(result, result , " ");
         }
 
-
-
-    // for(u32 i = 0; i < count; i++){
-    //     printf("\ndata_what[%u] = %u", i , data_what[i]);
-    //     printf("wordl: %u" , getWordAt(word , data_what[i]));
-    // }
-
-    //
 
     add_var("<-12345->"  , result);
     
@@ -238,11 +243,6 @@ void display(){
     u32 data_where[128];
     u32 countWr = compile(command, data_where);
 
-    // for(u32 i = 0; i < count; i++){
-    //     printf("\ndata_where[%u] = %u", i , data_where[i]);
-    //     printf("wordl: %u" , getWordAt(data_where[i]));
-    // }
-
     char result[256];
     result[0] = '\0';
 
@@ -250,20 +250,6 @@ void display(){
 
     char word[64];
 
-    if(countWr == 0){
-        data_where[0] = 0;
-        add_var("<-12345->"  , "ROOT");
-    }else{
-        // collect the words from the file to display
-        for(u32 i = 0; i < countWr; i++){
-            // get the word
-            getWordAt(word , data_where[i]);
-            // concat in resultſ
-            str_cat(result , result , word);
-            str_cat(result, result , " ");
-        }
-        add_var("<-12345->"  , result);
-    }
 
     // send request to e-pathy
     u32 data_what[1] = {0};
@@ -282,6 +268,18 @@ void display(){
         printf(" %u) %u " , i , epathy_response_buffer[i]);
     }
 
+
+    // collect the words from the file to display
+    for(u32 i = 0; i < res_size; i++){
+        // get the word
+        getWordAt(word , epathy_response_buffer[i]);
+        // concat in resultſ
+        str_cat(result , result , word);
+        str_cat(result, result , " ");
+    }
+    add_var("<-12345->"  , result);
+
+    
     
     const char filein[] = "views/html.html";
     const char fileout[] = "tempfile.html";
