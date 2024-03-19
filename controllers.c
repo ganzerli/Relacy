@@ -146,6 +146,7 @@ u32 compile( char* stringToId , u32* buffer){
     // if 1st char is / return root
     if(splitted[0][0] == '/'){
         // bad format , or wanted ROOT  
+        printf("log from compile -> splitted[0][0] == '/'");
         buffer[0] = 0;
         return 0;
     }
@@ -195,7 +196,6 @@ void add(){
     }
 
 
-
     char result[256]; result[0] = '\0';
     char word[64];
 
@@ -211,7 +211,6 @@ void add(){
 
 
     str_cat(result, result, " nodes: ");
-
         for(u32 i = 0; i < countWt; i++){
             // get the word
             getWordAt(word , data_what[i]);
@@ -257,7 +256,7 @@ void display(){
     u32 ept_req_bf[256];
 
     // format a request buffer
-    u32 req_size = epathy_request(ept_req_bf , DISPLAY_ROOT, data_where, countWr, data_what , 0 );
+    u32 req_size = epathy_request(ept_req_bf , DISPLAY_PATH, data_where, countWr, data_what , 0 );
 
     // get response from e-pathy TCP 
     unsigned int res_size = client_call( "127.0.0.1" , "8680", ept_req_bf , req_size , epathy_response_buffer );

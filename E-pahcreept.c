@@ -467,7 +467,6 @@ char* JSON_get_array(char* resultbf, char* data, unsigned int search){
 //          EEEEEEEE                P          A         A      T           H       H           Y
 
 
-
 #define DISPLAY_ROOT 0
 #define ADD_NODE 1
 #define ADD_TO_EXISTING_PATH 2
@@ -501,11 +500,9 @@ u32 epathy_request(u32 *epathy_request_bf, u32 command, u32* data_where, u32 dt_
 }
 
 
-
            //     EEEEEEE                 PPPPPP          A      TTTTTTTTTTT      H       H       Y       Y
           //      E                       P     P        AAA          T           H       H        Y     Y
          //       EEEEE       #######     P     P       A   A         T           H       H         YY YY
         //        E                       PPPPPP       AAAAAAA        T           HHHHHHHHH           Y
        //         E                       P           A       A       T           H       H           Y
       //          EEEEEEEE                P          A         A      T           H       H           Y
-
