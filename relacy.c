@@ -17,7 +17,7 @@ u32 word_index(char* word){
     // place for files content
     u32 idbf[4096* sizeof(u32)];
     char wordsbf[4096];
-    file_load(idbf , INDEXYX);
+    file_load((char*)idbf , INDEXYX);
     file_load(wordsbf , WORDSDUMP);
 
     // CHECK IF WORD IS PRESENT
@@ -71,7 +71,7 @@ u32 getWordAt( char* word_bf , u32 idToSearch){
     u32 idbf[4096* sizeof(u32)];
     char wordsbf[4096];
 
-    file_load(idbf , INDEXYX);        
+    file_load((char*)idbf , INDEXYX);        
     file_load(wordsbf , WORDSDUMP);
 
     u32 count = idbf[0];

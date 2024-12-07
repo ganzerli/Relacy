@@ -55,6 +55,7 @@ void response_send_file( char* filename ){
 
 }
 
+#include <string.h>
 
 void response_send_pic(char* filename){
 

@@ -82,7 +82,7 @@ void dev(){
     }
     //snprintf( stdout , res_size , "\n%u", epathy_response_buffer[0]);
     //  create tempfile for html
-    file_write("tempfile.html", epathy_response_buffer);
+    file_write("tempfile.html", (char*)epathy_response_buffer);
     response_send_file("tempfile.html");
     remove("tempfile.html");
 
