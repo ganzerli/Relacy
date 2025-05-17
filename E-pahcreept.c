@@ -114,8 +114,13 @@ void var_to_values(char* buffer, char** strings , unsigned int count){
      }
 }
 
-// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // POPULATE STRINS WITH VALUES IN VARS // // 
+// //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // SEARCH INDEXES SURROUNDING THE "VARIABLES" IN THE HTML // // 
 // this function is to keep as it is.. dont modulate it
+
+// this function does:
+// - checks all chars in the html,' ',' ', until   "<-"
+// - writes in indexes where are located begin and end of the searched container for the variable [<]- variable -[>]
+// - that is then used in split_n_keep to split the whole html in many strings** 
 int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
 
     char frs_c = from[0];
@@ -162,6 +167,16 @@ int find_in_str (char * text, char* from , char* to , unsigned int* indexes){
 }
 
 // //  // //  // // //  // //  // // //  // //  // // //  // //  // // //  // //  // SPLIT THROUGHT "str" KEEP ALSO str // // 
+// - keep the whole html in the first string until [<]-variable-> mallocking all
+// - save also the [<]-variable-[>] in a separated mallocked string
+
+// - practically based on indexes[] from firsts_in_str
+// - malloc begin until "<-" , malloc <-variable-> , malloc the rest until next variable or end of html
+
+// then to replace the variables in the html with whatever value is easy to check for "<-variable->" , free that, malloc the value, save the pointer there.
+
+// i know is kind of unreadable, can be better with all of indexes[] , is that the whole relacy is done with the sole purpose to display the result of e-pathy in the html, then was done that it works, nothing much more, for whats about these 2 functions..
+
 unsigned int split_n_keep(char** substrings, char* text){
     unsigned int size = 0;
     unsigned int indexes[512];
